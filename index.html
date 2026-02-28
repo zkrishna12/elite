@@ -1,0 +1,5301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>THE VAULT — Invite Only Ultra-Luxury Marketplace</title>
+  <meta name="description" content="The world's only invite-only concierge for ultra-luxury goods. $10,000 minimum. We handle everything." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <style>
+    /* ============================================================
+       CSS CUSTOM PROPERTIES — BRAND DESIGN TOKENS
+    ============================================================ */
+    :root {
+      --obsidian: #0A0A0A;
+      --obsidian-soft: #111111;
+      --obsidian-mid: #1A1A1A;
+      --obsidian-raised: #222222;
+      --champagne: #C9A96E;
+      --champagne-light: #E8D5A3;
+      --champagne-dark: #8B6914;
+      --ivory: #FAFAF5;
+      --ivory-dim: #C8C8B8;
+      --ivory-muted: #888880;
+      --burgundy: #4A0E0E;
+      --burgundy-light: #7A1E1E;
+      --navy: #0D1B2A;
+      --navy-light: #152538;
+      --white: #ffffff;
+      --error: #E07070;
+      --success: #70C878;
+
+      --font-display: 'Cormorant Garamond', Georgia, serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+
+      --space-xs: 0.25rem;
+      --space-sm: 0.5rem;
+      --space-md: 1rem;
+      --space-lg: 1.5rem;
+      --space-xl: 2rem;
+      --space-2xl: 3rem;
+      --space-3xl: 4rem;
+      --space-4xl: 6rem;
+      --space-5xl: 8rem;
+
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+
+      --shadow-gold: 0 0 20px rgba(201, 169, 110, 0.2);
+      --shadow-gold-strong: 0 0 40px rgba(201, 169, 110, 0.4);
+      --shadow-deep: 0 20px 60px rgba(0, 0, 0, 0.8);
+
+      --transition-fast: 0.2s ease;
+      --transition-med: 0.4s ease;
+      --transition-slow: 0.8s ease;
+
+      --nav-height: 72px;
+      --max-width: 1400px;
+    }
+
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      background: var(--obsidian);
+      color: var(--ivory);
+      font-family: var(--font-body);
+      font-weight: 400;
+      line-height: 1.6;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    body.menu-open {
+      overflow: hidden;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    input, textarea, select, button {
+      font-family: var(--font-body);
+    }
+
+    ::selection {
+      background: rgba(201, 169, 110, 0.3);
+      color: var(--ivory);
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--obsidian); }
+    ::-webkit-scrollbar-thumb { background: var(--champagne-dark); border-radius: 2px; }
+
+    /* ============================================================
+       CUSTOM CURSOR
+    ============================================================ */
+    .cursor-dot {
+      position: fixed;
+      width: 8px;
+      height: 8px;
+      background: var(--champagne);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 99999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s ease, width 0.2s ease, height 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 0 12px rgba(201, 169, 110, 0.8), 0 0 24px rgba(201, 169, 110, 0.4);
+    }
+
+    .cursor-ring {
+      position: fixed;
+      width: 32px;
+      height: 32px;
+      border: 1px solid rgba(201, 169, 110, 0.5);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 99998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.15s ease, width 0.3s ease, height 0.3s ease, border-color 0.3s ease;
+    }
+
+    .cursor-dot.cursor-hover {
+      width: 12px;
+      height: 12px;
+      box-shadow: 0 0 20px rgba(201, 169, 110, 1), 0 0 40px rgba(201, 169, 110, 0.6);
+    }
+
+    .cursor-ring.cursor-hover {
+      width: 48px;
+      height: 48px;
+      border-color: rgba(201, 169, 110, 0.8);
+    }
+
+    /* ============================================================
+       LOADING SCREEN
+    ============================================================ */
+    #loading-screen {
+      position: fixed;
+      inset: 0;
+      background: var(--obsidian);
+      z-index: 99990;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+
+    #loading-screen.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .loading-particles {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .loading-particle {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: var(--champagne);
+      border-radius: 50%;
+      animation: float-particle 4s ease-in-out infinite;
+      opacity: 0;
+    }
+
+    @keyframes float-particle {
+      0% { opacity: 0; transform: translateY(100vh) scale(0); }
+      20% { opacity: 0.8; }
+      80% { opacity: 0.4; }
+      100% { opacity: 0; transform: translateY(-20vh) scale(1.5); }
+    }
+
+    .loading-monogram {
+      position: relative;
+      margin-bottom: 2rem;
+    }
+
+    .loading-monogram svg {
+      width: 80px;
+      height: 80px;
+    }
+
+    .loading-monogram .v-path {
+      stroke: var(--champagne);
+      stroke-width: 2;
+      fill: none;
+      stroke-dasharray: 300;
+      stroke-dashoffset: 300;
+      animation: draw-v 1.5s ease forwards 0.3s;
+      filter: drop-shadow(0 0 8px rgba(201, 169, 110, 0.8));
+    }
+
+    @keyframes draw-v {
+      to { stroke-dashoffset: 0; }
+    }
+
+    .loading-wordmark {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      letter-spacing: 0.5em;
+      color: var(--champagne);
+      text-transform: uppercase;
+      opacity: 0;
+      animation: fade-in-up 0.8s ease forwards 1.6s;
+    }
+
+    .loading-tagline {
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      color: var(--ivory-muted);
+      text-transform: uppercase;
+      opacity: 0;
+      margin-top: 0.5rem;
+      animation: fade-in-up 0.8s ease forwards 2s;
+    }
+
+    .loading-progress {
+      position: absolute;
+      bottom: 3rem;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 200px;
+      height: 1px;
+      background: rgba(201, 169, 110, 0.2);
+    }
+
+    .loading-progress-bar {
+      height: 100%;
+      background: var(--champagne);
+      width: 0%;
+      animation: progress-fill 2.2s ease forwards 0.2s;
+      box-shadow: 0 0 8px rgba(201, 169, 110, 0.6);
+    }
+
+    @keyframes progress-fill {
+      to { width: 100%; }
+    }
+
+    /* ============================================================
+       GLOBAL UTILITIES
+    ============================================================ */
+    .container {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 0 var(--space-xl);
+    }
+
+    @media (max-width: 768px) {
+      .container { padding: 0 var(--space-md); }
+    }
+
+    .gold-text { color: var(--champagne); }
+    .ivory-text { color: var(--ivory); }
+    .muted-text { color: var(--ivory-muted); }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 600;
+      color: var(--ivory);
+      line-height: 1.1;
+    }
+
+    .section-subtitle {
+      font-size: 0.9rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--champagne);
+      margin-bottom: var(--space-md);
+    }
+
+    .gold-line {
+      width: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--champagne), transparent);
+      margin: var(--space-lg) 0;
+      transition: width 1.2s ease;
+    }
+
+    .gold-line.animate { width: 100%; }
+
+    .gold-line-fixed {
+      width: 60px;
+      height: 2px;
+      background: var(--champagne);
+      margin: var(--space-md) 0;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.875rem 2rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all var(--transition-med);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.6s ease;
+    }
+
+    .btn:hover::before { transform: translateX(100%); }
+
+    .btn-primary {
+      background: var(--champagne);
+      color: var(--obsidian);
+    }
+
+    .btn-primary:hover {
+      background: var(--champagne-light);
+      box-shadow: var(--shadow-gold-strong);
+      transform: translateY(-2px);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--champagne);
+      border: 1px solid var(--champagne);
+    }
+
+    .btn-outline:hover {
+      background: rgba(201, 169, 110, 0.1);
+      box-shadow: var(--shadow-gold);
+      transform: translateY(-2px);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--ivory-dim);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--champagne);
+      color: var(--champagne);
+    }
+
+    /* Fade-in animation utility */
+    .fade-in-up {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .fade-in-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .fade-in {
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+
+    .fade-in.visible { opacity: 1; }
+
+    /* ============================================================
+       NAVIGATION
+    ============================================================ */
+    #navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--nav-height);
+      z-index: 1000;
+      transition: background 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    #navbar.scrolled {
+      background: rgba(10, 10, 10, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 1px 0 rgba(201, 169, 110, 0.15);
+    }
+
+    .nav-inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 0 var(--space-xl);
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      color: var(--champagne);
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xl);
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ivory-dim);
+      position: relative;
+      padding-bottom: 4px;
+      transition: color var(--transition-fast);
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--champagne);
+      transition: width var(--transition-med);
+    }
+
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--champagne);
+    }
+
+    .nav-links a:hover::after, .nav-links a.active::after {
+      width: 100%;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+    }
+
+    .nav-icon-btn {
+      background: none;
+      border: none;
+      color: var(--ivory-dim);
+      font-size: 1rem;
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: var(--radius-full);
+      transition: color var(--transition-fast), background var(--transition-fast);
+      position: relative;
+    }
+
+    .nav-icon-btn:hover { color: var(--champagne); background: rgba(201,169,110,0.1); }
+
+    .nav-icon-btn .badge {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      width: 8px;
+      height: 8px;
+      background: var(--champagne);
+      border-radius: 50%;
+      border: 1px solid var(--obsidian);
+    }
+
+    .nav-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid var(--champagne);
+      background: var(--champagne-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--ivory);
+      cursor: pointer;
+      transition: box-shadow var(--transition-fast);
+      font-family: var(--font-display);
+    }
+
+    .nav-avatar:hover { box-shadow: 0 0 16px rgba(201,169,110,0.5); }
+
+    /* Hamburger */
+    .nav-hamburger {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      flex-direction: column;
+      gap: 5px;
+      padding: 0.5rem;
+    }
+
+    .nav-hamburger span {
+      display: block;
+      width: 24px;
+      height: 1px;
+      background: var(--ivory);
+      transition: all 0.3s ease;
+    }
+
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+    /* Mobile Menu Overlay */
+    .mobile-menu {
+      position: fixed;
+      inset: 0;
+      background: var(--obsidian);
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+
+    .mobile-menu.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .mobile-menu-links {
+      list-style: none;
+      text-align: center;
+    }
+
+    .mobile-menu-links li {
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+
+    .mobile-menu.open .mobile-menu-links li:nth-child(1) { opacity: 1; transform: none; transition-delay: 0.1s; }
+    .mobile-menu.open .mobile-menu-links li:nth-child(2) { opacity: 1; transform: none; transition-delay: 0.15s; }
+    .mobile-menu.open .mobile-menu-links li:nth-child(3) { opacity: 1; transform: none; transition-delay: 0.2s; }
+    .mobile-menu.open .mobile-menu-links li:nth-child(4) { opacity: 1; transform: none; transition-delay: 0.25s; }
+    .mobile-menu.open .mobile-menu-links li:nth-child(5) { opacity: 1; transform: none; transition-delay: 0.3s; }
+    .mobile-menu.open .mobile-menu-links li:nth-child(6) { opacity: 1; transform: none; transition-delay: 0.35s; }
+
+    .mobile-menu-links a {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      font-weight: 600;
+      color: var(--ivory-dim);
+      letter-spacing: 0.1em;
+      transition: color 0.2s ease;
+    }
+
+    .mobile-menu-links a:hover { color: var(--champagne); }
+
+    /* ============================================================
+       SECTION PAGE SYSTEM
+    ============================================================ */
+    .page-section {
+      display: none;
+      min-height: 100vh;
+      padding-top: var(--nav-height);
+    }
+
+    .page-section.active {
+      display: block;
+    }
+
+    #home-section {
+      display: block;
+    }
+
+    /* ============================================================
+       HERO SECTION
+    ============================================================ */
+    #hero {
+      position: relative;
+      height: 100vh;
+      min-height: 700px;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 100%, rgba(74, 14, 14, 0.3) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 80% at 20% 50%, rgba(13, 27, 42, 0.5) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 80% 30%, rgba(201, 169, 110, 0.05) 0%, transparent 50%),
+        linear-gradient(180deg, #0A0A0A 0%, #0D1018 40%, #0A0A0A 100%);
+    }
+
+    .hero-vault-art {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .vault-circle {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(201, 169, 110, 0.08);
+    }
+
+    .vault-circle:nth-child(1) { width: 900px; height: 900px; animation: rotate-slow 40s linear infinite; }
+    .vault-circle:nth-child(2) { width: 700px; height: 700px; border-color: rgba(201,169,110,0.05); animation: rotate-slow 30s linear infinite reverse; }
+    .vault-circle:nth-child(3) { width: 500px; height: 500px; border-color: rgba(201,169,110,0.1); animation: rotate-slow 20s linear infinite; }
+    .vault-circle:nth-child(4) { width: 300px; height: 300px; border-color: rgba(201,169,110,0.15); animation: rotate-slow 15s linear infinite reverse; }
+
+    @keyframes rotate-slow {
+      to { transform: rotate(360deg); }
+    }
+
+    .vault-line-h {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(201,169,110,0.12), transparent);
+    }
+
+    .vault-line-v {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: linear-gradient(180deg, transparent, rgba(201,169,110,0.12), transparent);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 0 var(--space-xl);
+      width: 100%;
+    }
+
+    .hero-eyebrow {
+      font-size: 0.75rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--champagne);
+      margin-bottom: var(--space-lg);
+      opacity: 0;
+      animation: fade-in-up 0.8s ease forwards 2.8s;
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+    }
+
+    .hero-eyebrow::before {
+      content: '';
+      display: block;
+      width: 40px;
+      height: 1px;
+      background: var(--champagne);
+    }
+
+    .hero-headline {
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 7vw, 6rem);
+      font-weight: 600;
+      color: var(--ivory);
+      line-height: 1.05;
+      max-width: 750px;
+      opacity: 0;
+      animation: fade-in-up 0.9s ease forwards 3s;
+    }
+
+    .hero-headline em {
+      font-style: italic;
+      color: var(--champagne);
+    }
+
+    .hero-subheadline {
+      max-width: 520px;
+      font-size: 1.05rem;
+      font-weight: 300;
+      color: var(--ivory-dim);
+      line-height: 1.7;
+      margin-top: var(--space-xl);
+      opacity: 0;
+      animation: fade-in-up 0.8s ease forwards 3.2s;
+    }
+
+    .hero-cta-group {
+      display: flex;
+      gap: var(--space-md);
+      margin-top: var(--space-2xl);
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fade-in-up 0.8s ease forwards 3.4s;
+    }
+
+    .hero-scroll-indicator {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0;
+      animation: fade-in 1s ease forwards 4s;
+      cursor: pointer;
+    }
+
+    .hero-scroll-text {
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--ivory-muted);
+    }
+
+    .hero-scroll-arrow {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(180deg, var(--champagne), transparent);
+      animation: scroll-pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes scroll-pulse {
+      0%, 100% { opacity: 0.4; transform: scaleY(1); }
+      50% { opacity: 1; transform: scaleY(1.2); }
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: var(--space-2xl);
+      margin-top: var(--space-3xl);
+      padding-top: var(--space-xl);
+      padding-right: 0;
+      padding-bottom: var(--space-xl);
+      border-top: 1px solid rgba(201,169,110,0.15);
+      opacity: 0;
+      animation: fade-in-up 0.8s ease forwards 3.6s;
+      flex-wrap: wrap;
+    }
+
+    .hero-stat-value {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--champagne);
+      line-height: 1;
+    }
+
+    .hero-stat-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ivory-muted);
+      margin-top: 0.25rem;
+      white-space: nowrap;
+    }
+
+    @keyframes fade-in-up {
+      to { opacity: 1; transform: translateY(0); }
+      from { opacity: 0; transform: translateY(30px); }
+    }
+
+    @keyframes fade-in {
+      to { opacity: 1; }
+      from { opacity: 0; }
+    }
+
+    /* ============================================================
+       GOLD LINE SEPARATOR
+    ============================================================ */
+    .section-gold-separator {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(201,169,110,0.4), transparent);
+      margin: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .section-gold-separator::after {
+      content: '◆';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: var(--champagne);
+      font-size: 0.6rem;
+      background: var(--obsidian);
+      padding: 0 0.5rem;
+    }
+
+    /* ============================================================
+       HOW IT WORKS SECTION
+    ============================================================ */
+    #how-it-works {
+      padding: var(--space-5xl) 0;
+      background: var(--obsidian);
+    }
+
+    .how-it-works-header {
+      text-align: center;
+      margin-bottom: var(--space-4xl);
+    }
+
+    .how-it-works-header .gold-line {
+      width: 80px;
+      height: 1px;
+      background: var(--champagne);
+      margin: var(--space-md) auto;
+    }
+
+    .how-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-xl);
+    }
+
+    @media (max-width: 900px) {
+      .how-cards-grid { grid-template-columns: 1fr; max-width: 480px; margin: 0 auto; }
+    }
+
+    .how-card {
+      background: var(--obsidian-soft);
+      border: 1px solid rgba(201,169,110,0.1);
+      border-radius: var(--radius-md);
+      padding: var(--space-2xl);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+    }
+
+    .how-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(201,169,110,0.05) 0%, transparent 50%);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .how-card:hover::before { opacity: 1; }
+
+    .how-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(201,169,110,0.3), var(--shadow-gold);
+      border-color: rgba(201,169,110,0.3);
+    }
+
+    .how-card-number {
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      letter-spacing: 0.3em;
+      color: var(--champagne-dark);
+      text-transform: uppercase;
+      margin-bottom: var(--space-lg);
+    }
+
+    .how-card-icon {
+      width: 52px;
+      height: 52px;
+      border: 1px solid rgba(201,169,110,0.3);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      color: var(--champagne);
+      margin-bottom: var(--space-lg);
+      transition: background 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    .how-card:hover .how-card-icon {
+      background: rgba(201,169,110,0.1);
+      box-shadow: var(--shadow-gold);
+    }
+
+    .how-card-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--champagne);
+      margin-bottom: 0.5rem;
+    }
+
+    .how-card-title {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: var(--ivory);
+      margin-bottom: var(--space-md);
+      line-height: 1.2;
+    }
+
+    .how-card-text {
+      font-size: 0.9rem;
+      color: var(--ivory-muted);
+      line-height: 1.8;
+    }
+
+    /* ============================================================
+       FEATURED COLLECTION SECTION
+    ============================================================ */
+    #featured-collection {
+      padding: var(--space-5xl) 0;
+      overflow: hidden;
+    }
+
+    .featured-collection-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: var(--space-2xl);
+      gap: var(--space-xl);
+    }
+
+    .featured-collection-header .gold-line {
+      flex: 1;
+      max-width: 400px;
+      margin: 0;
+    }
+
+    .carousel-wrapper {
+      position: relative;
+      margin: 0 -2rem;
+      padding: 0 2rem;
+    }
+
+    .carousel-track {
+      display: flex;
+      gap: var(--space-lg);
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding-bottom: var(--space-md);
+      scroll-snap-type: x mandatory;
+    }
+
+    .carousel-track::-webkit-scrollbar { display: none; }
+
+    .product-card {
+      flex: 0 0 300px;
+      background: var(--obsidian-soft);
+      border: 1px solid rgba(201,169,110,0.08);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      cursor: pointer;
+      scroll-snap-align: start;
+      transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    .product-card:hover {
+      transform: translateY(-6px) scale(1.01);
+      border-color: rgba(201,169,110,0.4);
+      box-shadow: var(--shadow-deep), var(--shadow-gold);
+    }
+
+    .product-card-image {
+      width: 100%;
+      aspect-ratio: 4/3;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+
+    .product-card:hover .product-card-image { transform: scale(1.05); }
+
+    .product-card-image-wrap {
+      overflow: hidden;
+      position: relative;
+    }
+
+    .product-auth-badge {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      background: rgba(10,10,10,0.85);
+      border: 1px solid rgba(201,169,110,0.4);
+      color: var(--champagne);
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.6rem;
+      border-radius: var(--radius-full);
+      backdrop-filter: blur(8px);
+    }
+
+    .product-card-body {
+      padding: var(--space-lg);
+    }
+
+    .product-card-category {
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--champagne);
+      margin-bottom: 0.5rem;
+    }
+
+    .product-card-name {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--ivory);
+      margin-bottom: 0.5rem;
+      line-height: 1.3;
+    }
+
+    .product-card-price {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--champagne);
+      letter-spacing: 0.05em;
+    }
+
+    .carousel-nav {
+      display: flex;
+      justify-content: center;
+      gap: var(--space-md);
+      margin-top: var(--space-xl);
+    }
+
+    .carousel-btn {
+      width: 44px;
+      height: 44px;
+      border: 1px solid rgba(201,169,110,0.3);
+      background: transparent;
+      color: var(--champagne);
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      font-size: 0.85rem;
+    }
+
+    .carousel-btn:hover {
+      background: rgba(201,169,110,0.1);
+      border-color: var(--champagne);
+      box-shadow: var(--shadow-gold);
+    }
+
+    .view-collection-link {
+      text-align: center;
+      margin-top: var(--space-2xl);
+    }
+
+    .view-collection-link a {
+      font-size: 0.75rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--champagne);
+      border-bottom: 1px solid rgba(201,169,110,0.4);
+      padding-bottom: 2px;
+      transition: border-color 0.3s ease, color 0.3s ease;
+    }
+
+    .view-collection-link a:hover {
+      color: var(--champagne-light);
+      border-color: var(--champagne);
+    }
+
+    /* ============================================================
+       CATEGORIES SECTION
+    ============================================================ */
+    #categories {
+      padding: var(--space-5xl) 0;
+      background: linear-gradient(180deg, var(--obsidian) 0%, var(--navy) 50%, var(--obsidian) 100%);
+    }
+
+    .categories-header { text-align: center; margin-bottom: var(--space-4xl); }
+
+    .categories-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-md);
+    }
+
+    @media (max-width: 900px) { .categories-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 500px) { .categories-grid { grid-template-columns: 1fr; } }
+
+    .category-card {
+      background: var(--obsidian-soft);
+      border: 1px solid rgba(201,169,110,0.08);
+      border-radius: var(--radius-md);
+      padding: var(--space-xl) var(--space-lg);
+      cursor: pointer;
+      transition: all 0.4s ease;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+    }
+
+    .category-card:hover {
+      border-color: rgba(201,169,110,0.4);
+      background: rgba(201,169,110,0.04);
+      transform: translateX(4px);
+      box-shadow: var(--shadow-gold);
+    }
+
+    .category-card-left {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+    }
+
+    .category-icon {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--champagne);
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .category-name {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      color: var(--ivory);
+      font-weight: 500;
+    }
+
+    .category-count {
+      font-size: 0.7rem;
+      color: var(--ivory-muted);
+      letter-spacing: 0.1em;
+      margin-top: 2px;
+    }
+
+    .category-arrow {
+      color: var(--champagne-dark);
+      font-size: 0.75rem;
+      transition: transform 0.3s ease, color 0.3s ease;
+    }
+
+    .category-card:hover .category-arrow {
+      transform: translateX(4px);
+      color: var(--champagne);
+    }
+
+    /* ============================================================
+       COLLECTION PAGE
+    ============================================================ */
+    #collection-section {
+      padding: var(--space-3xl) 0 var(--space-5xl);
+    }
+
+    .collection-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: var(--space-2xl);
+      align-items: start;
+    }
+
+    @media (max-width: 900px) { .collection-layout { grid-template-columns: 1fr; } }
+
+    .collection-sidebar {
+      background: var(--obsidian-soft);
+      border: 1px solid rgba(201,169,110,0.1);
+      border-radius: var(--radius-md);
+      padding: var(--space-xl);
+      position: sticky;
+      top: calc(var(--nav-height) + var(--space-lg));
+    }
+
+    .filter-group { margin-bottom: var(--space-xl); }
+
+    .filter-title {
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--champagne);
+      margin-bottom: var(--space-md);
+      padding-bottom: var(--space-sm);
+      border-bottom: 1px solid rgba(201,169,110,0.15);
+    }
+
+    .filter-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      margin-bottom: 0.6rem;
+      cursor: pointer;
+    }
+
+    .filter-item input[type="checkbox"] {
+      accent-color: var(--champagne);
+      width: 14px;
+      height: 14px;
+      cursor: pointer;
+    }
+
+    .filter-item label {
+      font-size: 0.85rem;
+      color: var(--ivory-dim);
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+
+    .filter-item:hover label { color: var(--champagne); }
+
+    .price-range-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--ivory-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--champagne);
+      cursor: pointer;
+    }
+
+    .filter-select {
+      width: 100%;
+      background: var(--obsidian-mid);
+      border: 1px solid rgba(201,169,110,0.2);
+      color: var(--ivory-dim);
+      padding: 0.6rem 0.8rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23C9A96E'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.8rem center;
+    }
+
+    .filter-select:focus { outline: none; border-color: var(--champagne); }
+
+    .collection-grid-area {}
+
+    .collection-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-xl);
+      flex-wrap: wrap;
+      gap: var(--space-md);
+    }
+
+    .collection-count {
+      font-size: 0.8rem;
+      color: var(--ivory-muted);
+    }
+
+    .collection-count span { color: var(--champagne); }
+
+    .collection-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-lg);
+    }
+
+    @media (max-width: 1100px) { .collection-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 600px) { .collection-grid { grid-template-columns: 1fr; } }
+
+    /* Product Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 9000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-xl);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .modal-overlay.open { opacity: 1; visibility: visible; }
+
+    .modal-content {
+      background: var(--obsidian-soft);
+      border: 1px solid rgba(201,169,110,0.2);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 900px;
+      max-height: 90vh;
+      overflow-y: auto;
+      transform: translateY(20px);
+      transition: transform 0.3s ease;
+      position: relative;
+    }
+
+    .modal-overlay.open .modal-content { transform: translateY(0); }
+
+    .modal-close {
+      position: absolute;
+      top: var(--space-lg);
+      right: var(--space-lg);
+      background: rgba(201,169,110,0.1);
+      border: 1px solid rgba(201,169,110,0.3);
+      color: var(--champagne);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+      z-index: 10;
+    }
+
+    .modal-close:hover { background: rgba(201,169,110,0.2); }
+
+    .modal-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+
+    @media (max-width: 600px) { .modal-grid { grid-template-columns: 1fr; } }
+
+    .modal-image-wrap {
+      position: relative;
+      aspect-ratio: 1;
+    }
+
+    .modal-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+    }
+
+    @media (max-width: 600px) { .modal-image { border-radius: var(--radius-lg) var(--radius-lg) 0 0; } }
+
+    .modal-details {
+      padding: var(--space-2xl);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+
+    .modal-category {
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--champagne);
+    }
+
+    .modal-title {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--ivory);
+      line-height: 1.2;
+    }
+
+    .modal-price {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--champagne);
+    }
+
+    .modal-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .modal-meta-item {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid rgba(201,169,110,0.08);
+    }
+
+    .modal-meta-label { color: var(--ivory-muted); }
+    .modal-meta-value { color: var(--ivory-dim); font-weight: 500; }
+
+    .modal-market-context {
+      background: rgba(201,169,110,0.05);
+      border: 1px solid rgba(201,169,110,0.15);
+      border-radius: var(--radius-sm);
+      padding: var(--space-md);
+      font-size: 0.82rem;
+      color: var(--ivory-muted);
+    }
+
+    .modal-market-context strong { color: var(--champagne); }
+
+    .modal-seller {
+      font-size: 0.78rem;
+      color: var(--ivory-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .modal-seller i { color: var(--champagne); }
+
+    .modal-actions { display: flex; flex-direction: column; gap: var(--space-sm); margin-top: auto; }
+
+    /* ============================================================
+       MEMBERSHIP PAGE
+    ============================================================ */
+    #membership-section {
+      padding: var(--space-5xl) 0;
+    }
+
+    .membership-header {
+      text-align: center;
+      margin-bottom: var(--space-4xl);
+    }
+
+    .membership-price {
+      font-family: var(--font-display);
+      font-size: clamp(1.5rem, 4vw, 2.5rem);
+      color: var(--champagne);
+      margin-top: var(--space-md);
+    }
+
+    .membership-card-container {
+      perspective: 1000px;
+      width: 380px;
+      height: 240px;
+      margin: 0 auto var(--space-4xl);
+    }
+
+    .membership-card {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: transform 0.1s ease;
+    }
+
+    .membership-card-face {
+      position: absolute;
+      inset: 0;
+      border-radius: 16px;
+      padding: 2rem;
+      background:
+        linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 40%, #1a1a1a 100%);
+      border: 1px solid rgba(201,169,110,0.3);
+      overflow: hidden;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.8), inset 0 1px 0 rgba(201,169,110,0.2);
+    }
+
+    .membership-card-shine {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.06) 50%, transparent 60%);
+      border-radius: 16px;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .membership-card-bg-text {
+      position: absolute;
+      font-family: var(--font-display);
+      font-size: 6rem;
+      font-weight: 700;
+      color: rgba(201,169,110,0.04);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      white-space: nowrap;
+      letter-spacing: 0.2em;
+      user-select: none;
+    }
+
+    .membership-card-logo {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      letter-spacing: 0.3em;
+      color: var(--champagne);
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .membership-card-chip {
+      position: absolute;
+      top: 2rem;
+      right: 2rem;
+      width: 40px;
+      height: 32px;
+      background: linear-gradient(135deg, #C9A96E, #8B6914, #C9A96E);
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    }
+
+    .membership-card-chip::after {
+      content: '';
+      position: absolute;
+      inset: 4px;
+      border: 1px solid rgba(0,0,0,0.3);
+      border-radius: 3px;
+    }
+
+    .membership-card-number {
+      position: absolute;
+      bottom: 3.5rem;
+      left: 2rem;
+      font-size: 0.9rem;
+      letter-spacing: 0.3em;
+      color: rgba(201,169,110,0.6);
+      font-weight: 300;
+    }
+
+    .membership-card-holder {
+      position: absolute;
+      bottom: 1.5rem;
+      left: 2rem;
+    }
+
+    .membership-card-holder-label {
+      font-size: 0.5rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(201,169,110,0.4);
+      margin-bottom: 2px;
+    }
+
+    .membership-card-holder-name {
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(201,169,110,0.7);
+    }
+
+    .membership-card-tier {
+      position: absolute;
+      bottom: 1.5rem;
+      right: 2rem;
+      text-align: right;
+    }
+
+    .membership-card-tier-label {
+      font-size: 0.55rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(201,169,110,0.4);
+    }
+
+    .membership-card-tier-name {
+      font-size: 0.8rem;
+      color: var(--champagne);
+      font-weight: 600;
+    }
+
+    .membership-features {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-3xl);
+      margin-bottom: var(--space-4xl);
+    }
+
+    @media (max-width: 700px) { .membership-features { grid-template-columns: 1fr; } }
+
+    .membership-feature-col h3 {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      color: var(--champagne);
+      margin-bottom: var(--space-lg);
+      padding-bottom: var(--space-md);
+      border-bottom: 1px solid rgba(201,169,110,0.15);
+    }
+
+    .feature-list { list-style: none; }
+
+    .feature-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-md);
+      padding: 0.75rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      font-size: 0.9rem;
+      color: var(--ivory-dim);
+    }
+
+    .feature-list li i {
+      color: var(--champagne);
+      margin-top: 2px;
+      flex-shrink: 0;
+      font-size: 0.75rem;
+    }
+
+    .membership-cta { text-align: center; margin-bottom: var(--space-4xl); }
+
+    .membership-addons-title {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      color: var(--ivory);
+      text-align: center;
+      margin-bottom: var(--space-2xl);
+    }
+
+    .addons-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-lg);
+    }
+
+    @media (max-width: 900px) { .addons-grid { grid-template-columns: 1fr; } }
+
+    .addon-card {
+      background: var(--obsidian-soft);
+      border: 1px solid rgba(201,169,110,0.1);
+      border-radius: var(--radius-md);
+      padding: var(--space-xl);
+      transition: all 0.4s ease;
+    }
+
+    .addon-card:hover {
+      border-color: rgba(201,169,110,0.3);
+      box-shadow: var(--shadow-gold);
+      transform: translateY(-4px);
+    }
+
+    .addon-price {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      color: var(--champagne);
+      margin-bottom: var(--space-sm);
+    }
+
+    .addon-name {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      color: var(--ivory);
+      margin-bottom: var(--space-sm);
+    }
+
+    .addon-desc {
+      font-size: 0.85rem;
+      color: var(--ivory-muted);
+      line-height: 1.7;
+    }
+
+    /* ============================================================
+       SELL / SELLER DASHBOARD
+    ============================================================ */
+    #sell-section {
+      padding: var(--space-3xl) 0 var(--space-5xl);
+    }
+
+    .sell-layout {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: var(--space-2xl);
+    }
+
+    @media (max-width: 1000px) { .sell-layout { grid-template-columns: 1fr; } }
+
+    .upload-zone {
+      border: 2px dashed rgba(201,169,110,0.3);
+      border-radius: var(--radius-md);
+      padding: var(--space-4xl);
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: var(--obsidian-soft);
+      position: relative;
+    }
+
+    .upload-zone:hover, .upload-zone.dragover {
+      border-color: var(--champagne);
+      background: rgba(201,169,110,0.04);
+      box-shadow: 0 0 30px rgba(201,169,110,0.15);
+    }
+
+    .upload-zone i {
+      font-size: 2.5rem;
+      color: var(--champagne-dark);
+      margin-bottom: var(--space-lg);
+    }
+
+    .upload-zone-title {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      color: var(--ivory-dim);
+      margin-bottom: 0.5rem;
+    }
+
+    .upload-zone-sub {
+      font-size: 0.8rem;
+      color: var(--ivory-muted);
+    }
+
+    .upload-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .sell-form {
+      background: var(--obsidian-soft);
+      border: 1px solid rgba(201,169,110,0.1);
+      border-radius: var(--radius-md);
+      padding: var(--space-2xl);
+    }
+
+    .form-group {
+      margin-bottom: var(--space-lg);
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--champagne);
+      margin-bottom: 0.5rem;
+    }
+
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      background: var(--obsidian-mid);
+      border: 1px solid rgba(201,169,110,0.15);
+      color: var(--ivory);
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      outline: none;
+    }
+
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--champagne);
+      box-shadow: 0 0 0 2px rgba(201,169,110,0.1);
+    }
+
+    .form-input::placeholder, .form-textarea::placeholder { color: var(--ivory-muted); }
+
+    .form-error {
+      font-size: 0.78rem;
+      color: var(--error);
+      margin-top: 0.4rem;
+      display: none;
+    }
+
+    .form-error.show { display: block; }
+
+    .form-select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23C9A96E'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      cursor: pointer;
+    }
+
+    .form-select option { background: var(--obsidian-mid); }
+
+    .pipeline-section {
+      margin-top: var(--space-3xl);
+    }
+
+    .pipeline-steps {
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .pipeline-steps::-webkit-scrollbar { display: none; }
+
+    .pipeline-step {
+      flex: 1;
+      min-width: 100px;
+      text-align: center;
+      padding: var(--space-md);
+      position: relative;
+    }
+
+    .pipeline-step::after {
+      content: '';
+      position: absolute;
+      top: 20px;
+      right: 0;
+      width: 50%;
+      height: 2px;
+      background: rgba(201,169,110,0.2);
+    }
+
+    .pipeline-step:last-child::after { display: none; }
+
+    .pipeline-step::before {
+      content: '';
+      position: absolute;
+      top: 20px;
+      left: 0;
+      width: 50%;
+      height: 2px;
+      background: rgba(201,169,110,0.2);
+    }
+
+    .pipeline-step:first-child::before { display: none; }
+
+    .pipeline-step-dot {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid rgba(201,169,110,0.3);
+      background: var(--obsidian-soft);
+      margin: 0 auto var(--space-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      color: var(--ivory-muted);
+      position: relative;
+      z-index: 1;
+      transition: all 0.3s ease;
+    }
+
+    .pipeline-step.active .pipeline-step-dot {
+      border-color: var(--champagne);
+      background: rgba(201,169,110,0.1);
+      color: var(--champagne);
+      box-shadow: 0 0 16px rgba(201,169,110,0.3);
+    }
+
+    .pipeline-step.done .pipeline-step-dot {
+      border-color: var(--champagne);
+      background: var(--champagne);
+      color: var(--obsidian);
+    }
+
+    .pipeline-step-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ivory-muted);
+    }
+
+    .pipeline-step.active .pipeline-step-label { color: var(--champagne); }
+
+    /* Recent Listings Table */
+    .listings-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: var(--space-lg);
+    }
+
+    .listings-table th {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--champagne);
+      padding: var(--space-md) var(--space-lg);
+      border-bottom: 1px solid rgba(201,169,110,0.15);
+      text-align: left;
+    }
+
+    .listings-table td {
+      padding: var(--space-md) var(--space-lg);
+      border-bottom: 1px solid rgba(201,169,110,0.06);
+      font-size: 0.85rem;
+      color: var(--ivory-dim);
+    }
+
+    .listings-table tr:hover td { background: rgba(201,169,110,0.03); }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.6rem;
+      border-radius: var(--radius-full);
+    }
+
+    .status-badge.listed { background: rgba(201,169,110,0.1); color: var(--champagne); border: 1px solid rgba(201,169,110,0.3); }
+    .status-badge.review { background: rgba(13,27,42,0.5); color: #7ab3e0; border: 1px solid rgba(100,160,220,0.3); }
+    .status-badge.sold { background: rgba(50,120,60,0.2); color: var(--success); border: 1px solid rgba(50,180,60,0.3); }
+    .status-badge.draft { background: rgba(80,80,80,0.2); color: var(--ivory-muted); border: 1px solid rgba(120,120,120,0.3); }
+
+    .table-thumb {
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+      border-radius: var(--radius-sm);
+    }
+
+    /* ============================================================
+       BUYER DASHBOARD
+    ============================================================ */
+    #dashboard-section {
+      padding: var(--space-3xl) 0 var(--space-5xl);
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-lg);
+      margin-bottom: var(--space-2xl);
+    }
+
+    @media (max-width: 900px) { .dashboard-grid { grid-template-columns: 1fr; } }
+
+    .dashboard-widget {
+      background: var(--obsidian-soft);
+      border: 1px solid rgba(201,169,110,0.1);
+      border-radius: var(--radius-md);
+      padding: var(--space-xl);
+    }
+
+    .widget-title {
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--champagne);
+      margin-bottom: var(--space-lg);
+    }
+
+    .paypal-widget {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+    }
+
+    .paypal-logo {
+      width: 48px;
+      height: 48px;
+      background: #003087;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.75rem;
+      color: white;
+      letter-spacing: 0.05em;
+    }
+
+    .paypal-info { flex: 1; }
+    .paypal-email { font-size: 0.85rem; color: var(--ivory-dim); }
+
+    .connected-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.2rem 0.5rem;
+      border-radius: var(--radius-full);
+      background: rgba(50,180,60,0.15);
+      color: var(--success);
+      border: 1px solid rgba(50,180,60,0.3);
+      margin-top: 0.3rem;
+    }
+
+    .connected-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--success);
+      border-radius: 50%;
+    }
+
+    .find-it-form {}
+
+    .find-it-textarea {
+      width: 100%;
+      background: var(--obsidian-mid);
+      border: 1px solid rgba(201,169,110,0.15);
+      color: var(--ivory);
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      resize: vertical;
+      min-height: 100px;
+      outline: none;
+      transition: border-color 0.3s ease;
+      margin-bottom: var(--space-md);
+    }
+
+    .find-it-textarea:focus { border-color: var(--champagne); }
+    .find-it-textarea::placeholder { color: var(--ivory-muted); }
+
+    .dashboard-full {
+      grid-column: 1 / -1;
+    }
+
+    /* ============================================================
+       LUXE AI CHAT
+    ============================================================ */
+    .luxe-float-btn {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      width: 56px;
+      height: 56px;
+      background: var(--champagne);
+      border: none;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 8000;
+      box-shadow: 0 8px 30px rgba(201,169,110,0.4);
+      transition: all 0.3s ease;
+      color: var(--obsidian);
+      font-size: 1.2rem;
+    }
+
+    .luxe-float-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 12px 40px rgba(201,169,110,0.6);
+    }
+
+    .luxe-float-btn .luxe-notif {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      width: 16px;
+      height: 16px;
+      background: var(--burgundy-light);
+      border: 2px solid var(--obsidian);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.5rem;
+      color: white;
+      font-weight: 700;
+    }
+
+    .luxe-chat-panel {
+      position: fixed;
+      bottom: 5.5rem;
+      right: 2rem;
+      width: 380px;
+      max-height: 560px;
+      background: var(--obsidian-soft);
+      border: 1px solid rgba(201,169,110,0.2);
+      border-radius: 20px;
+      z-index: 7999;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-deep), var(--shadow-gold);
+      transform: translateY(20px) scale(0.95);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      overflow: hidden;
+    }
+
+    .luxe-chat-panel.open {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .luxe-chat-header {
+      padding: var(--space-lg) var(--space-xl);
+      border-bottom: 1px solid rgba(201,169,110,0.1);
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      background: linear-gradient(135deg, rgba(201,169,110,0.08), transparent);
+    }
+
+    .luxe-chat-avatar {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--champagne), var(--champagne-dark));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      color: var(--obsidian);
+      flex-shrink: 0;
+    }
+
+    .luxe-chat-name {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--ivory);
+    }
+
+    .luxe-chat-status {
+      font-size: 0.7rem;
+      color: var(--success);
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .luxe-chat-status::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--success);
+      border-radius: 50%;
+    }
+
+    .luxe-chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+
+    .chat-message {
+      max-width: 85%;
+      animation: chat-appear 0.3s ease;
+    }
+
+    @keyframes chat-appear {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .chat-message.luxe {
+      align-self: flex-start;
+    }
+
+    .chat-message.user {
+      align-self: flex-end;
+    }
+
+    .chat-bubble {
+      padding: 0.75rem 1rem;
+      border-radius: 16px;
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+
+    .chat-message.luxe .chat-bubble {
+      background: rgba(201,169,110,0.08);
+      border: 1px solid rgba(201,169,110,0.15);
+      color: var(--ivory-dim);
+      border-radius: 4px 16px 16px 16px;
+    }
+
+    .chat-message.user .chat-bubble {
+      background: rgba(13,27,42,0.8);
+      border: 1px solid rgba(201,169,110,0.2);
+      color: var(--ivory);
+      border-radius: 16px 16px 4px 16px;
+    }
+
+    .chat-sender {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: var(--champagne);
+      text-transform: uppercase;
+      margin-bottom: 0.3rem;
+    }
+
+    .chat-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: var(--space-md);
+    }
+
+    .chat-chip {
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      padding: 0.35rem 0.8rem;
+      border: 1px solid rgba(201,169,110,0.3);
+      border-radius: var(--radius-full);
+      color: var(--champagne);
+      cursor: pointer;
+      background: transparent;
+      transition: all 0.2s ease;
+    }
+
+    .chat-chip:hover {
+      background: rgba(201,169,110,0.1);
+      border-color: var(--champagne);
+    }
+
+    .typing-indicator {
+      display: flex;
+      gap: 4px;
+      padding: 0.75rem 1rem;
+      background: rgba(201,169,110,0.08);
+      border: 1px solid rgba(201,169,110,0.15);
+      border-radius: 4px 16px 16px 16px;
+      width: fit-content;
+    }
+
+    .typing-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--champagne);
+      border-radius: 50%;
+      animation: typing-bounce 1.2s ease infinite;
+    }
+
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes typing-bounce {
+      0%, 100% { transform: translateY(0); opacity: 0.5; }
+      50% { transform: translateY(-5px); opacity: 1; }
+    }
+
+    .luxe-chat-input-area {
+      padding: var(--space-md) var(--space-lg);
+      border-top: 1px solid rgba(201,169,110,0.1);
+      display: flex;
+      gap: var(--space-sm);
+    }
+
+    .luxe-chat-input {
+      flex: 1;
+      background: var(--obsidian-mid);
+      border: 1px solid rgba(201,169,110,0.15);
+      color: var(--ivory);
+      padding: 0.65rem 1rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+
+    .luxe-chat-input:focus { border-color: var(--champagne); }
+    .luxe-chat-input::placeholder { color: var(--ivory-muted); }
+
+    .luxe-chat-send {
+      width: 38px;
+      height: 38px;
+      background: var(--champagne);
+      border: none;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--obsidian);
+      font-size: 0.85rem;
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .luxe-chat-send:hover {
+      background: var(--champagne-light);
+      box-shadow: var(--shadow-gold);
+    }
+
+    /* ============================================================
+       AUCTIONS PAGE
+    ============================================================ */
+    #auctions-section {
+      padding: var(--space-3xl) 0 var(--space-5xl);
+    }
+
+    .auction-hero {
+      position: relative;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-bottom: var(--space-3xl);
+      height: 420px;
+    }
+
+    .auction-hero-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .auction-hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(10,10,10,0.9) 0%, rgba(10,10,10,0.5) 60%, transparent 100%);
+      padding: var(--space-3xl);
+      display: flex;
+      align-items: flex-end;
+    }
+
+    .auction-hero-content { max-width: 500px; }
+
+    .auction-hero-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--champagne);
+      margin-bottom: var(--space-sm);
+    }
+
+    .auction-hero-title {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      color: var(--ivory);
+      margin-bottom: var(--space-lg);
+      line-height: 1.2;
+    }
+
+    .auction-meta {
+      display: flex;
+      gap: var(--space-2xl);
+      margin-bottom: var(--space-xl);
+    }
+
+    .auction-meta-item { text-align: left; }
+
+    .auction-meta-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ivory-muted);
+    }
+
+    .auction-meta-value {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      color: var(--champagne);
+    }
+
+    .countdown-display {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      color: var(--champagne);
+      letter-spacing: 0.1em;
+    }
+
+    .auctions-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-lg);
+      margin-bottom: var(--space-3xl);
+    }
+
+    @media (max-width: 900px) { .auctions-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 600px) { .auctions-grid { grid-template-columns: 1fr; } }
+
+    .auction-card {
+      background: var(--obsidian-soft);
+      border: 1px solid rgba(201,169,110,0.1);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      transition: all 0.4s ease;
+    }
+
+    .auction-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(201,169,110,0.3);
+      box-shadow: var(--shadow-gold);
+    }
+
+    .auction-card-img {
+      width: 100%;
+      aspect-ratio: 4/3;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .auction-card:hover .auction-card-img { transform: scale(1.05); }
+
+    .auction-card-img-wrap { overflow: hidden; position: relative; }
+
+    .auction-time-badge {
+      position: absolute;
+      top: 0.75rem;
+      left: 0.75rem;
+      background: rgba(10,10,10,0.85);
+      border: 1px solid rgba(201,169,110,0.4);
+      color: var(--champagne);
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      padding: 0.3rem 0.7rem;
+      border-radius: var(--radius-full);
+      backdrop-filter: blur(8px);
+    }
+
+    .auction-card-body { padding: var(--space-lg); }
+
+    .auction-card-title {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      color: var(--ivory);
+      margin-bottom: 0.5rem;
+    }
+
+    .auction-card-bid {
+      font-size: 0.8rem;
+      color: var(--ivory-muted);
+      margin-bottom: var(--space-md);
+    }
+
+    .auction-card-bid span { color: var(--champagne); font-weight: 500; }
+
+    .flash-drops {
+      background: linear-gradient(135deg, rgba(74,14,14,0.3), rgba(10,10,10,0.8));
+      border: 1px solid rgba(201,169,110,0.2);
+      border-radius: var(--radius-lg);
+      padding: var(--space-3xl);
+      margin-bottom: var(--space-3xl);
+    }
+
+    .flash-drops-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-2xl);
+    }
+
+    .flash-drops-timer {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      color: var(--champagne);
+    }
+
+    .flash-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-lg);
+    }
+
+    @media (max-width: 800px) { .flash-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 500px) { .flash-grid { grid-template-columns: 1fr; } }
+
+    /* ============================================================
+       JOURNAL PAGE
+    ============================================================ */
+    #journal-section {
+      padding: var(--space-3xl) 0 var(--space-5xl);
+    }
+
+    .journal-hero {
+      position: relative;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-bottom: var(--space-3xl);
+      height: 500px;
+      cursor: pointer;
+    }
+
+    .journal-hero-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.8s ease;
+    }
+
+    .journal-hero:hover .journal-hero-img { transform: scale(1.03); }
+
+    .journal-hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(0deg, rgba(10,10,10,0.9) 0%, rgba(10,10,10,0.3) 60%, transparent 100%);
+      padding: var(--space-3xl);
+      display: flex;
+      align-items: flex-end;
+    }
+
+    .journal-hero-content { max-width: 650px; }
+
+    .journal-tag {
+      display: inline-block;
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--champagne);
+      border: 1px solid rgba(201,169,110,0.4);
+      padding: 0.25rem 0.75rem;
+      border-radius: var(--radius-full);
+      margin-bottom: var(--space-md);
+    }
+
+    .journal-hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.5rem, 3.5vw, 2.5rem);
+      color: var(--ivory);
+      line-height: 1.2;
+      margin-bottom: var(--space-md);
+    }
+
+    .journal-meta {
+      font-size: 0.78rem;
+      color: var(--ivory-muted);
+    }
+
+    .journal-meta span { color: var(--champagne); }
+
+    .journal-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-xl);
+    }
+
+    @media (max-width: 700px) { .journal-grid { grid-template-columns: 1fr; } }
+
+    .journal-card {
+      background: var(--obsidian-soft);
+      border: 1px solid rgba(201,169,110,0.08);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.4s ease;
+    }
+
+    .journal-card:hover {
+      border-color: rgba(201,169,110,0.3);
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-gold);
+    }
+
+    .journal-card-img {
+      width: 100%;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .journal-card:hover .journal-card-img { transform: scale(1.05); }
+    .journal-card-img-wrap { overflow: hidden; }
+
+    .journal-card-body { padding: var(--space-xl); }
+
+    .journal-card-title {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      color: var(--ivory);
+      margin: var(--space-sm) 0 var(--space-md);
+      line-height: 1.3;
+    }
+
+    .journal-card-excerpt {
+      font-size: 0.85rem;
+      color: var(--ivory-muted);
+      line-height: 1.7;
+      margin-bottom: var(--space-lg);
+    }
+
+    .journal-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--ivory-muted);
+    }
+
+    .journal-author {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* ============================================================
+       ADMIN PANEL
+    ============================================================ */
+    #admin-section {
+      padding: var(--space-3xl) 0 var(--space-5xl);
+    }
+
+    .admin-password-screen {
+      min-height: 60vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .admin-password-screen i {
+      font-size: 3rem;
+      color: var(--champagne-dark);
+      margin-bottom: var(--space-lg);
+    }
+
+    .admin-inner { display: none; }
+    .admin-inner.visible { display: block; }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: var(--space-md);
+      margin-bottom: var(--space-2xl);
+    }
+
+    @media (max-width: 1200px) { .kpi-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 700px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+
+    .kpi-card {
+      background: var(--obsidian-soft);
+      border: 1px solid rgba(201,169,110,0.1);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      transition: all 0.3s ease;
+    }
+
+    .kpi-card:hover {
+      border-color: rgba(201,169,110,0.3);
+      box-shadow: var(--shadow-gold);
+    }
+
+    .kpi-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ivory-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .kpi-value {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: var(--champagne);
+    }
+
+    .kpi-change {
+      font-size: 0.72rem;
+      margin-top: 0.3rem;
+    }
+
+    .kpi-change.up { color: var(--success); }
+    .kpi-change.down { color: var(--error); }
+
+    .admin-charts-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: var(--space-xl);
+      margin-bottom: var(--space-2xl);
+    }
+
+    @media (max-width: 900px) { .admin-charts-grid { grid-template-columns: 1fr; } }
+
+    .chart-widget {
+      background: var(--obsidian-soft);
+      border: 1px solid rgba(201,169,110,0.1);
+      border-radius: var(--radius-md);
+      padding: var(--space-xl);
+    }
+
+    .chart-widget-title {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--champagne);
+      margin-bottom: var(--space-lg);
+    }
+
+    /* Kanban */
+    .kanban-board {
+      display: flex;
+      gap: var(--space-md);
+      overflow-x: auto;
+      padding-bottom: var(--space-md);
+    }
+
+    .kanban-column {
+      flex: 0 0 200px;
+      background: var(--obsidian-soft);
+      border: 1px solid rgba(201,169,110,0.1);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+    }
+
+    .kanban-col-title {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--champagne);
+      margin-bottom: var(--space-md);
+      padding-bottom: var(--space-sm);
+      border-bottom: 1px solid rgba(201,169,110,0.15);
+    }
+
+    .kanban-card {
+      background: var(--obsidian-mid);
+      border: 1px solid rgba(201,169,110,0.08);
+      border-radius: var(--radius-sm);
+      padding: var(--space-md);
+      margin-bottom: var(--space-sm);
+      font-size: 0.8rem;
+      color: var(--ivory-dim);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .kanban-card:hover {
+      border-color: rgba(201,169,110,0.3);
+      background: rgba(201,169,110,0.05);
+    }
+
+    .kanban-card-name { font-weight: 500; color: var(--ivory); margin-bottom: 0.25rem; }
+    .kanban-card-meta { color: var(--ivory-muted); font-size: 0.72rem; }
+
+    .moderation-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      padding: var(--space-md);
+      border-bottom: 1px solid rgba(201,169,110,0.06);
+    }
+
+    .moderation-item img {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(201,169,110,0.1);
+    }
+
+    .moderation-info { flex: 1; }
+    .moderation-name { font-size: 0.9rem; color: var(--ivory); font-weight: 500; }
+    .moderation-meta { font-size: 0.75rem; color: var(--ivory-muted); margin-top: 0.25rem; }
+
+    .moderation-actions { display: flex; gap: 0.5rem; }
+
+    .approve-btn {
+      padding: 0.35rem 0.8rem;
+      font-size: 0.7rem;
+      background: rgba(50,180,60,0.15);
+      color: var(--success);
+      border: 1px solid rgba(50,180,60,0.3);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .approve-btn:hover { background: rgba(50,180,60,0.3); }
+
+    .reject-btn {
+      padding: 0.35rem 0.8rem;
+      font-size: 0.7rem;
+      background: rgba(200,60,60,0.15);
+      color: var(--error);
+      border: 1px solid rgba(200,60,60,0.3);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .reject-btn:hover { background: rgba(200,60,60,0.3); }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    #footer {
+      background: var(--obsidian-soft);
+      border-top: 1px solid rgba(201,169,110,0.1);
+      padding: var(--space-5xl) 0 0;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-3xl);
+      margin-bottom: var(--space-4xl);
+    }
+
+    @media (max-width: 900px) { .footer-grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-2xl); } }
+    @media (max-width: 500px) { .footer-grid { grid-template-columns: 1fr; } }
+
+    .footer-col-title {
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--champagne);
+      margin-bottom: var(--space-lg);
+      padding-bottom: var(--space-sm);
+      border-bottom: 1px solid rgba(201,169,110,0.15);
+    }
+
+    .footer-logo {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      letter-spacing: 0.2em;
+      color: var(--champagne);
+      margin-bottom: var(--space-md);
+    }
+
+    .footer-tagline {
+      font-size: 0.85rem;
+      color: var(--ivory-muted);
+      line-height: 1.7;
+      margin-bottom: var(--space-lg);
+    }
+
+    .footer-links { list-style: none; }
+
+    .footer-links li { margin-bottom: 0.65rem; }
+
+    .footer-links a {
+      font-size: 0.85rem;
+      color: var(--ivory-muted);
+      transition: color 0.2s ease;
+    }
+
+    .footer-links a:hover { color: var(--champagne); }
+
+    .footer-social {
+      display: flex;
+      gap: var(--space-md);
+      margin-top: var(--space-lg);
+    }
+
+    .footer-social a {
+      width: 36px;
+      height: 36px;
+      border: 1px solid rgba(201,169,110,0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ivory-muted);
+      font-size: 0.85rem;
+      transition: all 0.3s ease;
+    }
+
+    .footer-social a:hover {
+      border-color: var(--champagne);
+      color: var(--champagne);
+      background: rgba(201,169,110,0.1);
+    }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(201,169,110,0.08);
+      padding: var(--space-xl) 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--space-md);
+    }
+
+    .footer-copyright {
+      font-size: 0.75rem;
+      color: var(--ivory-muted);
+      letter-spacing: 0.1em;
+    }
+
+    .footer-legal {
+      display: flex;
+      gap: var(--space-xl);
+    }
+
+    .footer-legal a {
+      font-size: 0.75rem;
+      color: var(--ivory-muted);
+      transition: color 0.2s ease;
+    }
+
+    .footer-legal a:hover { color: var(--champagne); }
+
+    /* Section padding */
+    .section-pad {
+      padding: var(--space-5xl) 0;
+    }
+
+    /* Page header */
+    .page-header {
+      padding: var(--space-3xl) 0 var(--space-2xl);
+      border-bottom: 1px solid rgba(201,169,110,0.1);
+      margin-bottom: var(--space-3xl);
+    }
+
+    .page-header-inner {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: var(--space-xl);
+    }
+
+    /* Notification */
+    .toast {
+      position: fixed;
+      top: calc(var(--nav-height) + 1rem);
+      right: 1.5rem;
+      background: var(--obsidian-soft);
+      border: 1px solid rgba(201,169,110,0.3);
+      border-left: 3px solid var(--champagne);
+      color: var(--ivory-dim);
+      padding: var(--space-md) var(--space-lg);
+      border-radius: var(--radius-md);
+      font-size: 0.85rem;
+      z-index: 9999;
+      max-width: 320px;
+      box-shadow: var(--shadow-deep);
+      transform: translateX(calc(100% + 2rem));
+      transition: transform 0.4s ease;
+    }
+
+    .toast.show { transform: translateX(0); }
+    .toast-title { font-weight: 600; color: var(--champagne); margin-bottom: 0.25rem; font-size: 0.8rem; }
+
+    /* Membership card mobile */
+    @media (max-width: 420px) {
+      .membership-card-container { width: 100%; max-width: 340px; }
+    }
+
+    /* AI enhancement preview */
+    .enhancement-preview {
+      display: none;
+      gap: var(--space-md);
+      margin-top: var(--space-lg);
+    }
+
+    .enhancement-preview.show { display: grid; grid-template-columns: 1fr 1fr; }
+
+    .enhancement-img-wrap {
+      position: relative;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      aspect-ratio: 4/3;
+    }
+
+    .enhancement-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .enhancement-img-wrap.enhanced img {
+      filter: contrast(1.15) brightness(1.05) saturate(1.1);
+    }
+
+    .enhancement-label {
+      position: absolute;
+      bottom: 0.5rem;
+      left: 0.5rem;
+      background: rgba(10,10,10,0.8);
+      color: var(--ivory-dim);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 0.2rem 0.5rem;
+      border-radius: var(--radius-full);
+      border: 1px solid rgba(201,169,110,0.2);
+    }
+
+    .enhancement-img-wrap.enhanced .enhancement-label {
+      color: var(--champagne);
+      border-color: rgba(201,169,110,0.4);
+    }
+
+    /* Skeleton loader */
+    .skeleton {
+      background: linear-gradient(90deg, var(--obsidian-soft) 25%, var(--obsidian-mid) 50%, var(--obsidian-soft) 75%);
+      background-size: 200% 100%;
+      animation: skeleton-shimmer 1.5s infinite;
+      border-radius: var(--radius-sm);
+    }
+
+    @keyframes skeleton-shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* Misc */
+    .text-center { text-align: center; }
+    .mt-sm { margin-top: var(--space-sm); }
+    .mt-md { margin-top: var(--space-md); }
+    .mt-lg { margin-top: var(--space-lg); }
+    .mt-xl { margin-top: var(--space-xl); }
+    .mt-2xl { margin-top: var(--space-2xl); }
+    .mt-3xl { margin-top: var(--space-3xl); }
+    .mb-sm { margin-bottom: var(--space-sm); }
+    .mb-md { margin-bottom: var(--space-md); }
+    .mb-lg { margin-bottom: var(--space-lg); }
+    .mb-xl { margin-bottom: var(--space-xl); }
+
+    .section-title-wrap { text-align: center; margin-bottom: var(--space-3xl); }
+
+    /* Admin member search */
+    .admin-search {
+      display: flex;
+      gap: var(--space-md);
+      margin-bottom: var(--space-xl);
+    }
+
+    .admin-search .form-input { max-width: 300px; }
+
+    /* Past auctions table wrapper */
+    .table-wrapper {
+      overflow-x: auto;
+    }
+
+    /* Shimmer gold button effect */
+    @keyframes gold-shimmer {
+      0% { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+
+    .btn-primary {
+      background: linear-gradient(90deg, var(--champagne-dark), var(--champagne), var(--champagne-light), var(--champagne), var(--champagne-dark));
+      background-size: 300% auto;
+      animation: gold-shimmer 4s linear infinite;
+    }
+
+    .btn-primary:hover {
+      animation: gold-shimmer 1.5s linear infinite;
+    }
+
+    /* ============================================================
+       RESPONSIVE FINAL
+    ============================================================ */
+    @media (max-width: 768px) {
+      :root { --nav-height: 60px; }
+      .nav-links { display: none; }
+      .nav-hamburger { display: flex; }
+      .nav-actions .nav-icon-btn:not(.luxe-nav-btn) { display: none; }
+
+      .hero-stats { display: none; }
+      .hero-headline { font-size: clamp(2.2rem, 10vw, 3.5rem); }
+      .hero-subheadline { font-size: 0.95rem; }
+
+      .hero-cta-group { flex-direction: column; }
+      .hero-cta-group .btn { width: 100%; }
+
+      .cursor-dot, .cursor-ring { display: none; }
+      body { cursor: auto; }
+
+      .collection-layout { grid-template-columns: 1fr; }
+      .collection-sidebar { position: static; }
+
+      .sell-layout { grid-template-columns: 1fr; }
+
+      .modal-grid { grid-template-columns: 1fr; }
+      .modal-image { border-radius: var(--radius-lg) var(--radius-lg) 0 0; aspect-ratio: 16/9; }
+
+      .luxe-chat-panel { right: 1rem; left: 1rem; width: auto; bottom: 5rem; }
+      .luxe-float-btn { bottom: 1.5rem; right: 1.5rem; }
+
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+
+      .admin-charts-grid { grid-template-columns: 1fr; }
+
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+
+      .membership-card-container { width: 100%; max-width: 320px; height: 200px; }
+
+      .flash-grid { grid-template-columns: repeat(2, 1fr); }
+
+      .featured-collection-header { flex-direction: column; align-items: flex-start; }
+      .featured-collection-header .gold-line { display: none; }
+    }
+
+    @media (max-width: 480px) {
+      .footer-grid { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; align-items: flex-start; }
+      .addons-grid { grid-template-columns: 1fr; }
+      .categories-grid { grid-template-columns: 1fr; }
+      .auctions-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       CUSTOM CURSOR
+  ============================================================ -->
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- ============================================================
+       LOADING SCREEN
+  ============================================================ -->
+  <div id="loading-screen">
+    <div class="loading-particles" id="loadingParticles"></div>
+
+    <div class="loading-monogram">
+      <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+        <!-- V path: starts top-left, goes to bottom-center, comes back up top-right -->
+        <path class="v-path" d="M 10 15 L 40 65 L 70 15" />
+        <!-- Decorative top bar -->
+        <path class="v-path" d="M 5 15 L 75 15" style="animation-delay:0.8s; stroke-dasharray:200; stroke-dashoffset:200;" />
+      </svg>
+    </div>
+
+    <div class="loading-wordmark">The Vault</div>
+    <div class="loading-tagline">Invite Only · $10,000 Minimum</div>
+
+    <div class="loading-progress">
+      <div class="loading-progress-bar"></div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       TOAST NOTIFICATION
+  ============================================================ -->
+  <div class="toast" id="toast">
+    <div class="toast-title" id="toastTitle">Success</div>
+    <div id="toastMsg">Action completed.</div>
+  </div>
+
+  <!-- ============================================================
+       NAVIGATION
+  ============================================================ -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <div class="nav-logo" onclick="navigateTo('home')">THE VAULT</div>
+
+      <ul class="nav-links">
+        <li><a href="#collection" onclick="navigateTo('collection');return false;">Collection</a></li>
+        <li><a href="#membership" onclick="navigateTo('membership');return false;">Membership</a></li>
+        <li><a href="#sell" onclick="navigateTo('sell');return false;">Sell</a></li>
+        <li><a href="#auctions" onclick="navigateTo('auctions');return false;">Auctions</a></li>
+        <li><a href="#journal" onclick="navigateTo('journal');return false;">The Journal</a></li>
+        <li><a href="#admin" onclick="navigateTo('admin');return false;">Admin</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button class="nav-icon-btn luxe-nav-btn" title="LUXE AI" onclick="toggleChat()" style="color:var(--champagne)">
+          <i class="fa-solid fa-sparkles"></i>
+        </button>
+        <button class="nav-icon-btn" title="Notifications">
+          <i class="fa-regular fa-bell"></i>
+          <span class="badge"></span>
+        </button>
+        <div class="nav-avatar" title="My Account" onclick="navigateTo('dashboard')">V</div>
+        <button class="nav-hamburger" id="hamburger" onclick="toggleMobileMenu()">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu Overlay -->
+  <div class="mobile-menu" id="mobileMenu">
+    <ul class="mobile-menu-links">
+      <li><a href="#" onclick="navigateTo('collection');toggleMobileMenu();return false;">Collection</a></li>
+      <li><a href="#" onclick="navigateTo('membership');toggleMobileMenu();return false;">Membership</a></li>
+      <li><a href="#" onclick="navigateTo('sell');toggleMobileMenu();return false;">Sell</a></li>
+      <li><a href="#" onclick="navigateTo('auctions');toggleMobileMenu();return false;">Auctions</a></li>
+      <li><a href="#" onclick="navigateTo('journal');toggleMobileMenu();return false;">The Journal</a></li>
+      <li><a href="#" onclick="navigateTo('admin');toggleMobileMenu();return false;">Admin</a></li>
+    </ul>
+  </div>
+
+  <!-- ============================================================
+       HOME SECTION
+  ============================================================ -->
+  <div id="home-section" class="page-section active">
+
+    <!-- HERO -->
+    <section id="hero">
+      <div class="hero-bg"></div>
+      <div class="hero-vault-art">
+        <div class="vault-circle"></div>
+        <div class="vault-circle"></div>
+        <div class="vault-circle"></div>
+        <div class="vault-circle"></div>
+        <div class="vault-line-h"></div>
+        <div class="vault-line-v"></div>
+      </div>
+
+      <div class="hero-content">
+        <div class="hero-eyebrow">Invite Only · Est. 2024</div>
+        <h1 class="hero-headline">Where <em>Extraordinary</em><br>Changes Hands</h1>
+        <p class="hero-subheadline">The world's only invite-only concierge for ultra-luxury goods. $10,000 minimum. We handle everything.</p>
+        <div class="hero-cta-group">
+          <button class="btn btn-primary" onclick="navigateTo('collection')">Enter The Vault</button>
+          <button class="btn btn-outline" onclick="navigateTo('membership')">Request Membership</button>
+        </div>
+        <div class="hero-stats">
+          <div>
+            <div class="hero-stat-value">$47.2M</div>
+            <div class="hero-stat-label">Total GMV Facilitated</div>
+          </div>
+          <div>
+            <div class="hero-stat-value">1,840</div>
+            <div class="hero-stat-label">Active Members</div>
+          </div>
+          <div>
+            <div class="hero-stat-value">312</div>
+            <div class="hero-stat-label">Current Listings</div>
+          </div>
+          <div>
+            <div class="hero-stat-value">100%</div>
+            <div class="hero-stat-label">Authentication Rate</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-scroll-indicator" onclick="document.getElementById('how-it-works').scrollIntoView({behavior:'smooth'})">
+        <div class="hero-scroll-text">Discover</div>
+        <div class="hero-scroll-arrow"></div>
+      </div>
+    </section>
+
+    <div class="section-gold-separator"></div>
+
+    <!-- HOW IT WORKS -->
+    <section id="how-it-works" class="section-pad">
+      <div class="container">
+        <div class="how-it-works-header fade-in-up">
+          <div class="section-subtitle">The White Glove Process</div>
+          <h2 class="section-title">Effortless. <em style="font-style:italic; color:var(--champagne)">Every Time.</em></h2>
+          <div class="gold-line" style="width:80px; margin:var(--space-md) auto;"></div>
+        </div>
+        <div class="how-cards-grid">
+          <div class="how-card fade-in-up" style="transition-delay:0.1s">
+            <div class="how-card-number">01</div>
+            <div class="how-card-icon"><i class="fa-solid fa-camera"></i></div>
+            <div class="how-card-label">For Sellers</div>
+            <div class="how-card-title">Just Send Us The Pics</div>
+            <p class="how-card-text">Upload photos. We write the listing, enhance imagery, authenticate, price, find buyers, handle escrow, ship, and pay you. You do nothing.</p>
+          </div>
+          <div class="how-card fade-in-up" style="transition-delay:0.2s">
+            <div class="how-card-number">02</div>
+            <div class="how-card-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+            <div class="how-card-label">For Buyers</div>
+            <div class="how-card-title">Tell Us What You Want</div>
+            <p class="how-card-text">Browse our curated collection or tell LUXE what you're looking for. We source it globally, verify authenticity, negotiate, and deliver to your door.</p>
+          </div>
+          <div class="how-card fade-in-up" style="transition-delay:0.3s">
+            <div class="how-card-number">03</div>
+            <div class="how-card-icon"><i class="fa-solid fa-shield-halved"></i></div>
+            <div class="how-card-label">The Promise</div>
+            <div class="how-card-title">White Glove. Every Time.</div>
+            <p class="how-card-text">$10,000 minimum. 72-hour inspection. Full insurance. NDA available. Every transaction escrow-protected, end to end.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-gold-separator"></div>
+
+    <!-- FEATURED COLLECTION -->
+    <section id="featured-collection" class="section-pad">
+      <div class="container">
+        <div class="featured-collection-header fade-in-up">
+          <div>
+            <div class="section-subtitle">Hand-Selected. Authenticated.</div>
+            <h2 class="section-title">Currently In The Vault</h2>
+          </div>
+          <div class="gold-line animate"></div>
+        </div>
+
+        <div class="carousel-wrapper">
+          <div class="carousel-track" id="carouselTrack">
+
+            <!-- Card 1 -->
+            <div class="product-card" onclick="openProductModal(0)">
+              <div class="product-card-image-wrap">
+                <img class="product-card-image" src="https://images.ctfassets.net/a9wd67qru8w4/5iRcBbVhuRS39k8vKu1BZy/0df3068d7fdeb5ac2ef85143fc62b802/CW21_Magazin_06.jpg?fm=jpg&w=1920&q=100&fl=progressive" alt="Patek Philippe Nautilus 5711" loading="lazy" />
+                <div class="product-auth-badge">Authenticated ✓</div>
+              </div>
+              <div class="product-card-body">
+                <div class="product-card-category">Watches &amp; Horology</div>
+                <div class="product-card-name">Patek Philippe Nautilus 5711</div>
+                <div class="product-card-price">$185,000</div>
+              </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="product-card" onclick="openProductModal(1)">
+              <div class="product-card-image-wrap">
+                <img class="product-card-image" src="https://tempusmagazine.co.uk/app/uploads/news_images/9246158511.jpg" alt="Rolls-Royce Black Badge Ghost" loading="lazy" />
+                <div class="product-auth-badge">Authenticated ✓</div>
+              </div>
+              <div class="product-card-body">
+                <div class="product-card-category">Supercars &amp; Exotics</div>
+                <div class="product-card-name">Rolls-Royce Black Badge Ghost</div>
+                <div class="product-card-price">$385,000</div>
+              </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="product-card" onclick="openProductModal(2)">
+              <div class="product-card-image-wrap">
+                <img class="product-card-image" src="https://static.vecteezy.com/system/resources/previews/065/714/815/large_2x/luxury-diamond-necklace-shining-brightly-on-dark-background-photo.jpg" alt="18K Diamond Rivière Necklace" loading="lazy" />
+                <div class="product-auth-badge">Authenticated ✓</div>
+              </div>
+              <div class="product-card-body">
+                <div class="product-card-category">Fine Jewelry &amp; Gems</div>
+                <div class="product-card-name">18K Diamond Rivière Necklace</div>
+                <div class="product-card-price">$92,000</div>
+              </div>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="product-card" onclick="openProductModal(3)">
+              <div class="product-card-image-wrap">
+                <img class="product-card-image" src="https://www.christies.com/img/LotImages/2024/PAR/2024_PAR_23574_0160_000(a_limited_edition_black_calf_box_leather_so_black_birkin_35_with_black061651).jpg?mode=max" alt="Hermès So Black Birkin 35" loading="lazy" />
+                <div class="product-auth-badge">Authenticated ✓</div>
+              </div>
+              <div class="product-card-body">
+                <div class="product-card-category">Haute Couture &amp; Fashion</div>
+                <div class="product-card-name">Hermès So Black Birkin 35</div>
+                <div class="product-card-price">$75,000</div>
+              </div>
+            </div>
+
+            <!-- Card 5 -->
+            <div class="product-card" onclick="openProductModal(4)">
+              <div class="product-card-image-wrap">
+                <img class="product-card-image" src="https://thumbs.dreamstime.com/b/luxury-yacht-sailing-deep-blue-ocean-aerial-top-view-high-resolution-image-luxurious-motor-yacht-cuts-deep-blue-366258625.jpg" alt="Azimut Grande 32M" loading="lazy" />
+                <div class="product-auth-badge">Authenticated ✓</div>
+              </div>
+              <div class="product-card-body">
+                <div class="product-card-category">Yachts &amp; Aviation</div>
+                <div class="product-card-name">Azimut Grande 32M</div>
+                <div class="product-card-price">$2,400,000</div>
+              </div>
+            </div>
+
+            <!-- Card 6 -->
+            <div class="product-card" onclick="openProductModal(5)">
+              <div class="product-card-image-wrap">
+                <img class="product-card-image" src="https://images.stockcake.com/public/6/7/a/67a6970d-8d20-42d3-9a7a-45c197051e95_large/art-gallery-interior-stockcake.jpg" alt="Contemporary Abstract Oil on Canvas" loading="lazy" />
+                <div class="product-auth-badge">Authenticated ✓</div>
+              </div>
+              <div class="product-card-body">
+                <div class="product-card-category">Fine Art &amp; Sculptures</div>
+                <div class="product-card-name">Contemporary Abstract Oil on Canvas</div>
+                <div class="product-card-price">$340,000</div>
+              </div>
+            </div>
+
+            <!-- Card 7 -->
+            <div class="product-card" onclick="openProductModal(6)">
+              <div class="product-card-image-wrap">
+                <img class="product-card-image" src="https://cdn.cluboenologique.com/wp-content/uploads/2023/02/22105618/cellar_maison-lead.jpg" alt="Romanée-Conti 12-Bottle Vertical" loading="lazy" />
+                <div class="product-auth-badge">Authenticated ✓</div>
+              </div>
+              <div class="product-card-body">
+                <div class="product-card-category">Fine Wine &amp; Spirits</div>
+                <div class="product-card-name">Romanée-Conti 12-Bottle Vertical</div>
+                <div class="product-card-price">$128,000</div>
+              </div>
+            </div>
+
+            <!-- Card 8 -->
+            <div class="product-card" onclick="openProductModal(7)">
+              <div class="product-card-image-wrap">
+                <img class="product-card-image" src="https://hodinkee.imgix.net/uploads/images/ae56ad66-4cfa-4d2b-9d2e-e595d8f95761/patek-philippe-nautilus-5811-4.jpg?ixlib=rails-1.1.0&fm=jpg&q=55&auto=format&usm=12&fit=crop&ch=Width%2CDPR%2CSave-Data&alt=" alt="Patek Philippe 5811/1G" loading="lazy" />
+                <div class="product-auth-badge">Authenticated ✓</div>
+              </div>
+              <div class="product-card-body">
+                <div class="product-card-category">Watches &amp; Horology</div>
+                <div class="product-card-name">Patek Philippe 5811/1G</div>
+                <div class="product-card-price">$245,000</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="carousel-nav">
+          <button class="carousel-btn" onclick="scrollCarousel(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+          <button class="carousel-btn" onclick="scrollCarousel(1)"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+
+        <div class="view-collection-link fade-in-up">
+          <a href="#collection" onclick="navigateTo('collection');return false;">View Full Collection &nbsp;→</a>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-gold-separator"></div>
+
+    <!-- CATEGORIES -->
+    <section id="categories" class="section-pad">
+      <div class="container">
+        <div class="categories-header fade-in-up">
+          <div class="section-subtitle">Browse By World</div>
+          <h2 class="section-title">Curated Categories</h2>
+          <div class="gold-line-fixed" style="margin:var(--space-md) auto;"></div>
+        </div>
+        <div class="categories-grid" id="categoriesGrid">
+          <!-- Generated by JS -->
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /home-section -->
+
+  <!-- ============================================================
+       COLLECTION PAGE
+  ============================================================ -->
+  <div id="collection-section" class="page-section">
+    <div class="container">
+      <div class="page-header">
+        <div class="page-header-inner">
+          <div>
+            <div class="section-subtitle">The Vault</div>
+            <h1 class="section-title">The Collection</h1>
+          </div>
+          <div class="muted-text" style="font-size:0.85rem"><span id="collectionCountDisplay">312</span> authenticated items</div>
+        </div>
+      </div>
+
+      <div class="collection-layout">
+        <!-- Sidebar Filters -->
+        <aside class="collection-sidebar">
+          <div class="filter-title" style="font-size:0.8rem; letter-spacing:0.3em; margin-bottom:var(--space-xl);">Refine</div>
+
+          <div class="filter-group">
+            <div class="filter-title">Category</div>
+            <div id="categoryFilters"><!-- JS --></div>
+          </div>
+
+          <div class="filter-group">
+            <div class="filter-title">Price Range</div>
+            <div class="price-range-labels">
+              <span>$10K</span>
+              <span id="priceLabel">$5M+</span>
+            </div>
+            <input type="range" id="priceRange" min="10000" max="5000000" value="5000000" step="10000" oninput="updatePriceLabel(this.value)" />
+          </div>
+
+          <div class="filter-group">
+            <div class="filter-title">Condition</div>
+            <div class="filter-item"><input type="checkbox" id="condNew" checked /><label for="condNew">New</label></div>
+            <div class="filter-item"><input type="checkbox" id="condPreowned" checked /><label for="condPreowned">Pre-owned</label></div>
+            <div class="filter-item"><input type="checkbox" id="condVintage" checked /><label for="condVintage">Vintage</label></div>
+          </div>
+
+          <div class="filter-group">
+            <div class="filter-title">Authentication</div>
+            <div class="filter-item"><input type="checkbox" id="authVerified" checked /><label for="authVerified">Verified</label></div>
+            <div class="filter-item"><input type="checkbox" id="authPending" /><label for="authPending">Pending Review</label></div>
+          </div>
+
+          <div class="filter-group">
+            <div class="filter-title">Sort By</div>
+            <select class="filter-select" id="sortFilter">
+              <option>Price: High to Low</option>
+              <option>Price: Low to High</option>
+              <option>Newest First</option>
+              <option>Most Viewed</option>
+              <option>Ending Soon</option>
+            </select>
+          </div>
+
+          <button class="btn btn-outline" style="width:100%; margin-top:var(--space-md);">Apply Filters</button>
+          <button class="btn btn-ghost" style="width:100%; margin-top:var(--space-sm); font-size:0.75rem;">Reset All</button>
+        </aside>
+
+        <!-- Collection Grid -->
+        <div class="collection-grid-area">
+          <div class="collection-toolbar">
+            <div class="collection-count"><span id="filteredCount">312</span> items</div>
+            <div style="display:flex; gap:0.5rem; align-items:center;">
+              <span style="font-size:0.75rem; color:var(--ivory-muted);">View:</span>
+              <button class="carousel-btn" style="width:34px;height:34px;font-size:0.75rem;"><i class="fa-solid fa-grip"></i></button>
+              <button class="carousel-btn" style="width:34px;height:34px;font-size:0.75rem;"><i class="fa-solid fa-list"></i></button>
+            </div>
+          </div>
+          <div class="collection-grid" id="collectionGrid">
+            <!-- Generated by JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MEMBERSHIP PAGE
+  ============================================================ -->
+  <div id="membership-section" class="page-section">
+    <div class="container">
+      <div class="page-header">
+        <div class="page-header-inner fade-in-up">
+          <div>
+            <div class="section-subtitle">Access</div>
+            <h1 class="section-title">The Vault Membership</h1>
+          </div>
+        </div>
+      </div>
+
+      <div class="membership-header fade-in-up">
+        <p class="membership-price">$999/month &nbsp;·&nbsp; One Tier &nbsp;·&nbsp; No Compromises</p>
+        <p class="muted-text mt-md" style="font-size:0.9rem; max-width:540px; margin:var(--space-md) auto 0;">Reserved for those who transact beyond the ordinary. Full concierge. Full insurance. Full discretion.</p>
+      </div>
+
+      <!-- Membership Card -->
+      <div class="membership-card-container" id="membershipCardContainer">
+        <div class="membership-card" id="membershipCard">
+          <div class="membership-card-face">
+            <div class="membership-card-bg-text">VAULT</div>
+            <div class="membership-card-shine" id="cardShine"></div>
+            <div class="membership-card-logo">THE VAULT</div>
+            <div class="membership-card-chip"></div>
+            <div class="membership-card-number">•••• •••• •••• 2026</div>
+            <div class="membership-card-holder">
+              <div class="membership-card-holder-label">Member Since</div>
+              <div class="membership-card-holder-name">January 2024</div>
+            </div>
+            <div class="membership-card-tier">
+              <div class="membership-card-tier-label">Tier</div>
+              <div class="membership-card-tier-name">Founding</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Features -->
+      <div class="membership-features fade-in-up">
+        <div class="membership-feature-col">
+          <h3><i class="fa-solid fa-arrow-up-from-bracket" style="margin-right:0.5rem;font-size:0.9rem;"></i> Sell</h3>
+          <ul class="feature-list">
+            <li><i class="fa-solid fa-check"></i>Unlimited listings — no cap</li>
+            <li><i class="fa-solid fa-check"></i>AI-powered photo enhancement</li>
+            <li><i class="fa-solid fa-check"></i>Expert multi-point authentication</li>
+            <li><i class="fa-solid fa-check"></i>Global buyer network matching</li>
+            <li><i class="fa-solid fa-check"></i>Escrow protection &amp; insured shipping</li>
+            <li><i class="fa-solid fa-check"></i>8% commission only on sale</li>
+            <li><i class="fa-solid fa-check"></i>NDA available for sensitive items</li>
+          </ul>
+        </div>
+        <div class="membership-feature-col">
+          <h3><i class="fa-solid fa-bag-shopping" style="margin-right:0.5rem;font-size:0.9rem;"></i> Buy</h3>
+          <ul class="feature-list">
+            <li><i class="fa-solid fa-check"></i>Unlimited collection browsing</li>
+            <li><i class="fa-solid fa-check"></i>"Find It For Me" global sourcing</li>
+            <li><i class="fa-solid fa-check"></i>LUXE AI concierge 24/7</li>
+            <li><i class="fa-solid fa-check"></i>One-click PayPal purchase</li>
+            <li><i class="fa-solid fa-check"></i>72-hour inspection window</li>
+            <li><i class="fa-solid fa-check"></i>3% buyer's premium (lowest in class)</li>
+            <li><i class="fa-solid fa-check"></i>White-glove delivery worldwide</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="membership-cta fade-in-up">
+        <button class="btn btn-primary" style="font-size:0.9rem; padding:1rem 3rem;" onclick="showToast('Membership', 'Connecting you with our admissions team...')">
+          Begin Your Membership
+        </button>
+        <p class="muted-text mt-md" style="font-size:0.78rem;">Invite-based access. Current wait: 2–3 weeks.</p>
+      </div>
+
+      <!-- Add-ons -->
+      <div class="fade-in-up">
+        <h3 class="membership-addons-title">Optional Enhancements</h3>
+        <div class="addons-grid">
+          <div class="addon-card">
+            <div class="addon-price">+$500 / month</div>
+            <div class="addon-name">The Vault Black Card</div>
+            <p class="addon-desc">Physical titanium card. Priority access to flash drops. Airport concierge &amp; lounge access. Invitation to exclusive member events.</p>
+          </div>
+          <div class="addon-card">
+            <div class="addon-price">+$300 / month</div>
+            <div class="addon-name">Portfolio Management</div>
+            <p class="addon-desc">AI-driven portfolio tracking, market trend analysis, optimal sell-timing recommendations. Turn your collection into an asset class.</p>
+          </div>
+          <div class="addon-card">
+            <div class="addon-price">Custom Pricing</div>
+            <div class="addon-name">Estate Liquidation</div>
+            <p class="addon-desc">Full collection sale management with a dedicated portfolio manager. Photography, valuation, global marketing, and execution handled entirely.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       SELL / SELLER DASHBOARD
+  ============================================================ -->
+  <div id="sell-section" class="page-section">
+    <div class="container">
+      <div class="page-header">
+        <div class="page-header-inner fade-in-up">
+          <div>
+            <div class="section-subtitle">Seller Portal</div>
+            <h1 class="section-title">Your Vault</h1>
+          </div>
+          <div class="muted-text" style="font-size:0.85rem">3 active listings</div>
+        </div>
+      </div>
+
+      <div class="sell-layout">
+        <!-- Upload + Form -->
+        <div>
+          <!-- Upload Zone -->
+          <div class="upload-zone" id="uploadZone">
+            <input type="file" multiple accept="image/*" onchange="handleFileUpload(this)" />
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            <div class="upload-zone-title">Drop photos here or click to upload</div>
+            <p class="upload-zone-sub">JPG, PNG, WEBP · Up to 20 images · Max 50MB each</p>
+            <div id="uploadPreview" style="margin-top:1rem; display:flex; flex-wrap:wrap; gap:0.5rem; justify-content:center;"></div>
+          </div>
+
+          <!-- AI Enhancement Preview -->
+          <div class="enhancement-preview" id="enhancementPreview">
+            <div class="enhancement-img-wrap">
+              <img src="https://images.ctfassets.net/a9wd67qru8w4/5iRcBbVhuRS39k8vKu1BZy/0df3068d7fdeb5ac2ef85143fc62b802/CW21_Magazin_06.jpg?fm=jpg&w=600&q=80" alt="Original" />
+              <div class="enhancement-label">Before</div>
+            </div>
+            <div class="enhancement-img-wrap enhanced">
+              <img src="https://images.ctfassets.net/a9wd67qru8w4/5iRcBbVhuRS39k8vKu1BZy/0df3068d7fdeb5ac2ef85143fc62b802/CW21_Magazin_06.jpg?fm=jpg&w=600&q=80" alt="Enhanced" />
+              <div class="enhancement-label">After AI Enhancement</div>
+            </div>
+          </div>
+
+          <!-- Item Form -->
+          <div class="sell-form mt-xl">
+            <h3 style="font-family:var(--font-display); font-size:1.3rem; color:var(--ivory); margin-bottom:var(--space-xl);">Item Details</h3>
+
+            <div class="form-group">
+              <label class="form-label" for="itemName">Item Name</label>
+              <input class="form-input" type="text" id="itemName" placeholder="e.g. Patek Philippe Nautilus 5711" />
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:var(--space-lg);">
+              <div class="form-group">
+                <label class="form-label" for="itemCategory">Category</label>
+                <select class="form-select" id="itemCategory">
+                  <option value="">Select category</option>
+                  <option>Fine Art &amp; Sculptures</option>
+                  <option>Haute Couture &amp; Fashion</option>
+                  <option>Watches &amp; Horology</option>
+                  <option>Fine Jewelry &amp; Gems</option>
+                  <option>Supercars &amp; Exotic Motorcycles</option>
+                  <option>Yachts &amp; Private Aviation</option>
+                  <option>Luxury Real Estate</option>
+                  <option>Rare Collectibles &amp; Memorabilia</option>
+                  <option>Fine Wine &amp; Spirits</option>
+                  <option>Luxury Furniture &amp; Décor</option>
+                  <option>Designer Tech &amp; Gadgets</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="itemCondition">Condition</label>
+                <select class="form-select" id="itemCondition">
+                  <option>New (Unworn / Unopened)</option>
+                  <option>Pre-owned (Excellent)</option>
+                  <option>Pre-owned (Good)</option>
+                  <option>Vintage</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="askingPrice">Asking Price (USD)</label>
+              <input class="form-input" type="number" id="askingPrice" placeholder="$10,000 minimum" min="10000" oninput="validatePrice(this)" />
+              <div class="form-error" id="priceError">THE VAULT exclusively curates items valued at $10,000 and above.</div>
+            </div>
+
+            <div style="display:flex; gap:var(--space-md); flex-wrap:wrap;">
+              <button class="btn btn-outline" style="flex:1;" onclick="showEnhancement()">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> AI Enhancement Preview
+              </button>
+              <button class="btn btn-primary" style="flex:1;" onclick="submitListing()">
+                <i class="fa-solid fa-vault"></i> Submit to The Vault
+              </button>
+            </div>
+          </div>
+
+          <!-- Pipeline -->
+          <div class="pipeline-section mt-2xl">
+            <div class="section-subtitle" style="margin-bottom:var(--space-lg);">Listing Pipeline</div>
+            <div class="pipeline-steps">
+              <div class="pipeline-step done">
+                <div class="pipeline-step-dot"><i class="fa-solid fa-check" style="font-size:0.6rem;"></i></div>
+                <div class="pipeline-step-label">Draft</div>
+              </div>
+              <div class="pipeline-step done">
+                <div class="pipeline-step-dot"><i class="fa-solid fa-check" style="font-size:0.6rem;"></i></div>
+                <div class="pipeline-step-label">Received</div>
+              </div>
+              <div class="pipeline-step active">
+                <div class="pipeline-step-dot"><i class="fa-solid fa-clock" style="font-size:0.6rem;"></i></div>
+                <div class="pipeline-step-label">Authenticating</div>
+              </div>
+              <div class="pipeline-step">
+                <div class="pipeline-step-dot">4</div>
+                <div class="pipeline-step-label">Listed</div>
+              </div>
+              <div class="pipeline-step">
+                <div class="pipeline-step-dot">5</div>
+                <div class="pipeline-step-label">Sold</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Listings Sidebar -->
+        <div>
+          <div class="sell-form">
+            <h3 style="font-family:var(--font-display); font-size:1.3rem; color:var(--ivory); margin-bottom:var(--space-xl);">Recent Listings</h3>
+            <div class="table-wrapper">
+              <table class="listings-table">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>Item</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><img class="table-thumb" src="https://images.ctfassets.net/a9wd67qru8w4/5iRcBbVhuRS39k8vKu1BZy/0df3068d7fdeb5ac2ef85143fc62b802/CW21_Magazin_06.jpg?fm=jpg&w=80&q=80" alt="" /></td>
+                    <td>PP Nautilus 5711</td>
+                    <td>$185K</td>
+                    <td><span class="status-badge listed">Listed</span></td>
+                  </tr>
+                  <tr>
+                    <td><img class="table-thumb" src="https://www.christies.com/img/LotImages/2024/PAR/2024_PAR_23574_0160_000(a_limited_edition_black_calf_box_leather_so_black_birkin_35_with_black061651).jpg?mode=max" alt="" /></td>
+                    <td>Hermès Birkin 35</td>
+                    <td>$75K</td>
+                    <td><span class="status-badge review">Under Review</span></td>
+                  </tr>
+                  <tr>
+                    <td><img class="table-thumb" src="https://cdn.cluboenologique.com/wp-content/uploads/2023/02/22105618/cellar_maison-lead.jpg" alt="" /></td>
+                    <td>DRC Vertical 2010–21</td>
+                    <td>$128K</td>
+                    <td><span class="status-badge sold">Sold</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       BUYER DASHBOARD
+  ============================================================ -->
+  <div id="dashboard-section" class="page-section">
+    <div class="container">
+      <div class="page-header">
+        <div class="page-header-inner fade-in-up">
+          <div>
+            <div class="section-subtitle">Member Portal</div>
+            <h1 class="section-title">My Dashboard</h1>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-grid">
+        <!-- PayPal Widget -->
+        <div class="dashboard-widget">
+          <div class="widget-title">Payment Method</div>
+          <div class="paypal-widget">
+            <div class="paypal-logo">PayPal</div>
+            <div class="paypal-info">
+              <div class="paypal-email">j***a@gmail.com</div>
+              <div class="connected-badge">Connected</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="dashboard-widget">
+          <div class="widget-title">Portfolio Value</div>
+          <div style="font-family:var(--font-display); font-size:2rem; color:var(--champagne);">$847,000</div>
+          <div style="font-size:0.75rem; color:var(--success); margin-top:0.25rem;">↑ 12.4% this quarter</div>
+        </div>
+
+        <div class="dashboard-widget">
+          <div class="widget-title">Membership</div>
+          <div style="font-family:var(--font-display); font-size:1.2rem; color:var(--ivory);">Founding Member</div>
+          <div style="font-size:0.75rem; color:var(--ivory-muted); margin-top:0.25rem;">Since January 2024 · 26 months</div>
+          <div style="font-size:0.75rem; color:var(--champagne); margin-top:0.5rem;">Renews March 1, 2026</div>
+        </div>
+
+        <!-- Find It For Me -->
+        <div class="dashboard-widget dashboard-full">
+          <div class="widget-title">Find It For Me</div>
+          <p style="font-size:0.85rem; color:var(--ivory-muted); margin-bottom:var(--space-md);">Tell LUXE exactly what you're looking for — we'll source it globally and present options within 72 hours.</p>
+          <div class="find-it-form">
+            <textarea class="find-it-textarea" placeholder="e.g. I'm looking for a Rolex Daytona reference 116500LN in white dial, full set, under $40,000..." id="findItText"></textarea>
+            <button class="btn btn-primary" onclick="submitFindIt()">
+              <i class="fa-solid fa-sparkles"></i> Submit to LUXE
+            </button>
+          </div>
+        </div>
+
+        <!-- My Acquisitions -->
+        <div class="dashboard-widget dashboard-full">
+          <div class="widget-title">My Acquisitions</div>
+          <div class="table-wrapper">
+            <table class="listings-table">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Item</th>
+                  <th>Paid</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><img class="table-thumb" src="https://hodinkee.imgix.net/uploads/images/ae56ad66-4cfa-4d2b-9d2e-e595d8f95761/patek-philippe-nautilus-5811-4.jpg?ixlib=rails-1.1.0&fm=jpg&q=55&auto=format&usm=12&fit=crop&ch=Width%2CDPR%2CSave-Data&alt=" alt="" /></td>
+                  <td>Patek Philippe 5811/1G</td>
+                  <td>$245,000</td>
+                  <td>Jan 12, 2026</td>
+                  <td><span class="status-badge listed">Delivered</span></td>
+                </tr>
+                <tr>
+                  <td><img class="table-thumb" src="https://static.vecteezy.com/system/resources/previews/065/714/815/large_2x/luxury-diamond-necklace-shining-brightly-on-dark-background-photo.jpg" alt="" /></td>
+                  <td>18K Diamond Rivière Necklace</td>
+                  <td>$92,000</td>
+                  <td>Nov 28, 2025</td>
+                  <td><span class="status-badge listed">Delivered</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Wishlist -->
+        <div class="dashboard-widget dashboard-full">
+          <div class="widget-title">Wishlist</div>
+          <div style="display:flex; flex-wrap:wrap; gap:var(--space-md);">
+            <div class="product-card" style="flex:0 0 220px;" onclick="openProductModal(0)">
+              <div class="product-card-image-wrap">
+                <img class="product-card-image" src="https://images.ctfassets.net/a9wd67qru8w4/5iRcBbVhuRS39k8vKu1BZy/0df3068d7fdeb5ac2ef85143fc62b802/CW21_Magazin_06.jpg?fm=jpg&w=400&q=80" alt="" loading="lazy" />
+                <div class="product-auth-badge">Authenticated ✓</div>
+              </div>
+              <div class="product-card-body">
+                <div class="product-card-category">Watches &amp; Horology</div>
+                <div class="product-card-name">Patek Philippe Nautilus 5711</div>
+                <div class="product-card-price">$185,000</div>
+              </div>
+            </div>
+            <div class="product-card" style="flex:0 0 220px;" onclick="openProductModal(4)">
+              <div class="product-card-image-wrap">
+                <img class="product-card-image" src="https://thumbs.dreamstime.com/b/luxury-yacht-sailing-deep-blue-ocean-aerial-top-view-high-resolution-image-luxurious-motor-yacht-cuts-deep-blue-366258625.jpg" alt="" loading="lazy" />
+                <div class="product-auth-badge">Authenticated ✓</div>
+              </div>
+              <div class="product-card-body">
+                <div class="product-card-category">Yachts &amp; Aviation</div>
+                <div class="product-card-name">Azimut Grande 32M</div>
+                <div class="product-card-price">$2,400,000</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       AUCTIONS PAGE
+  ============================================================ -->
+  <div id="auctions-section" class="page-section">
+    <div class="container">
+      <div class="page-header">
+        <div class="page-header-inner fade-in-up">
+          <div>
+            <div class="section-subtitle">Live & Upcoming</div>
+            <h1 class="section-title">Private Auctions</h1>
+          </div>
+        </div>
+      </div>
+
+      <!-- Featured Auction Hero -->
+      <div class="auction-hero fade-in">
+        <img class="auction-hero-img" src="https://tempusmagazine.co.uk/app/uploads/news_images/9246158511.jpg" alt="Featured Auction" loading="lazy" />
+        <div class="auction-hero-overlay">
+          <div class="auction-hero-content">
+            <div class="auction-hero-label">Featured Live Auction</div>
+            <h2 class="auction-hero-title">Rolls-Royce Black Badge Ghost — 2024</h2>
+            <div class="auction-meta">
+              <div class="auction-meta-item">
+                <div class="auction-meta-label">Current Bid</div>
+                <div class="auction-meta-value" id="liveBid">$367,000</div>
+              </div>
+              <div class="auction-meta-item">
+                <div class="auction-meta-label">Bidders</div>
+                <div class="auction-meta-value">14</div>
+              </div>
+              <div class="auction-meta-item">
+                <div class="auction-meta-label">Time Remaining</div>
+                <div class="countdown-display" id="heroCountdown">--:--:--</div>
+              </div>
+            </div>
+            <button class="btn btn-primary" onclick="showToast('Auction', 'Bid placed successfully. You are now the leading bidder.')">
+              Place Bid Now
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Upcoming Auctions -->
+      <div class="section-subtitle mt-3xl mb-xl">Upcoming Auctions</div>
+      <div class="auctions-grid">
+        <div class="auction-card fade-in-up">
+          <div class="auction-card-img-wrap">
+            <img class="auction-card-img" src="https://images.ctfassets.net/a9wd67qru8w4/5iRcBbVhuRS39k8vKu1BZy/0df3068d7fdeb5ac2ef85143fc62b802/CW21_Magazin_06.jpg?fm=jpg&w=600&q=80" alt="" loading="lazy" />
+            <div class="auction-time-badge">Starts in 2d 4h</div>
+          </div>
+          <div class="auction-card-body">
+            <div class="product-card-category">Watches &amp; Horology</div>
+            <div class="auction-card-title">Patek Philippe Nautilus 5711</div>
+            <div class="auction-card-bid">Starting: <span>$150,000</span></div>
+            <button class="btn btn-outline" style="width:100%;" onclick="showToast('Auction', 'You have been added to the notification list for this auction.')">Set Reminder</button>
+          </div>
+        </div>
+        <div class="auction-card fade-in-up" style="transition-delay:0.1s">
+          <div class="auction-card-img-wrap">
+            <img class="auction-card-img" src="https://images.stockcake.com/public/6/7/a/67a6970d-8d20-42d3-9a7a-45c197051e95_large/art-gallery-interior-stockcake.jpg" alt="" loading="lazy" />
+            <div class="auction-time-badge">Starts in 5d 18h</div>
+          </div>
+          <div class="auction-card-body">
+            <div class="product-card-category">Fine Art &amp; Sculptures</div>
+            <div class="auction-card-title">Rare Contemporary Abstract Collection (3 works)</div>
+            <div class="auction-card-bid">Starting: <span>$280,000</span></div>
+            <button class="btn btn-outline" style="width:100%;" onclick="showToast('Auction', 'You have been added to the notification list for this auction.')">Set Reminder</button>
+          </div>
+        </div>
+        <div class="auction-card fade-in-up" style="transition-delay:0.2s">
+          <div class="auction-card-img-wrap">
+            <img class="auction-card-img" src="https://cdn.cluboenologique.com/wp-content/uploads/2023/02/22105618/cellar_maison-lead.jpg" alt="" loading="lazy" />
+            <div class="auction-time-badge">Starts in 10d</div>
+          </div>
+          <div class="auction-card-body">
+            <div class="product-card-category">Fine Wine &amp; Spirits</div>
+            <div class="auction-card-title">Romanée-Conti 1990 Magnum — Single Bottle</div>
+            <div class="auction-card-bid">Starting: <span>$45,000</span></div>
+            <button class="btn btn-outline" style="width:100%;" onclick="showToast('Auction', 'You have been added to the notification list for this auction.')">Set Reminder</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Flash Drops -->
+      <div class="flash-drops fade-in-up">
+        <div class="flash-drops-header">
+          <div>
+            <div class="section-subtitle">24-Hour Ultra-Rare</div>
+            <h3 style="font-family:var(--font-display); font-size:1.8rem; color:var(--ivory);">Flash Drops</h3>
+          </div>
+          <div>
+            <div style="font-size:0.65rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--ivory-muted); text-align:right; margin-bottom:0.25rem;">Ends In</div>
+            <div class="flash-drops-timer" id="flashTimer">--:--:--</div>
+          </div>
+        </div>
+        <div class="flash-grid">
+          <div class="product-card" onclick="showToast('Flash Drop', 'Redirecting to secure checkout...')">
+            <div class="product-card-image-wrap">
+              <img class="product-card-image" src="https://static.vecteezy.com/system/resources/previews/065/714/815/large_2x/luxury-diamond-necklace-shining-brightly-on-dark-background-photo.jpg" alt="" loading="lazy" />
+              <div class="product-auth-badge" style="background:rgba(74,14,14,0.9); border-color:rgba(201,169,110,0.6);">Flash Drop</div>
+            </div>
+            <div class="product-card-body">
+              <div class="product-card-category">Fine Jewelry</div>
+              <div class="product-card-name">Diamond Pavé Bracelet</div>
+              <div class="product-card-price">$34,500</div>
+            </div>
+          </div>
+          <div class="product-card" onclick="showToast('Flash Drop', 'Redirecting to secure checkout...')">
+            <div class="product-card-image-wrap">
+              <img class="product-card-image" src="https://www.christies.com/img/LotImages/2024/PAR/2024_PAR_23574_0160_000(a_limited_edition_black_calf_box_leather_so_black_birkin_35_with_black061651).jpg?mode=max" alt="" loading="lazy" />
+              <div class="product-auth-badge" style="background:rgba(74,14,14,0.9); border-color:rgba(201,169,110,0.6);">Flash Drop</div>
+            </div>
+            <div class="product-card-body">
+              <div class="product-card-category">Fashion</div>
+              <div class="product-card-name">Hermès Kelly 25 Sellier</div>
+              <div class="product-card-price">$42,000</div>
+            </div>
+          </div>
+          <div class="product-card" onclick="showToast('Flash Drop', 'Redirecting to secure checkout...')">
+            <div class="product-card-image-wrap">
+              <img class="product-card-image" src="https://hodinkee.imgix.net/uploads/images/ae56ad66-4cfa-4d2b-9d2e-e595d8f95761/patek-philippe-nautilus-5811-4.jpg?ixlib=rails-1.1.0&fm=jpg&q=55&auto=format&usm=12&fit=crop&ch=Width%2CDPR%2CSave-Data&alt=" alt="" loading="lazy" />
+              <div class="product-auth-badge" style="background:rgba(74,14,14,0.9); border-color:rgba(201,169,110,0.6);">Flash Drop</div>
+            </div>
+            <div class="product-card-body">
+              <div class="product-card-category">Watches</div>
+              <div class="product-card-name">PP Aquanaut 5168G Blue</div>
+              <div class="product-card-price">$98,000</div>
+            </div>
+          </div>
+          <div class="product-card" onclick="showToast('Flash Drop', 'Redirecting to secure checkout...')">
+            <div class="product-card-image-wrap">
+              <img class="product-card-image" src="https://cdn.cluboenologique.com/wp-content/uploads/2023/02/22105618/cellar_maison-lead.jpg" alt="" loading="lazy" />
+              <div class="product-auth-badge" style="background:rgba(74,14,14,0.9); border-color:rgba(201,169,110,0.6);">Flash Drop</div>
+            </div>
+            <div class="product-card-body">
+              <div class="product-card-category">Fine Wine</div>
+              <div class="product-card-name">Pétrus 1990 (6-Bottle)</div>
+              <div class="product-card-price">$61,000</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Past Results -->
+      <div class="section-subtitle mt-3xl mb-xl">Past Auction Results</div>
+      <div class="table-wrapper">
+        <table class="listings-table">
+          <thead>
+            <tr><th>Item</th><th>Category</th><th>Hammer Price</th><th>Date</th><th>Bids</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Bugatti Chiron Super Sport 300+</td><td>Supercars</td><td>$3,900,000</td><td>Jan 15, 2026</td><td>22</td></tr>
+            <tr><td>Basquiat "Untitled (1982)"</td><td>Fine Art</td><td>$1,250,000</td><td>Dec 10, 2025</td><td>31</td></tr>
+            <tr><td>Patek Philippe Ref. 1518 Steel</td><td>Watches</td><td>$4,200,000</td><td>Nov 8, 2025</td><td>18</td></tr>
+            <tr><td>Hermès Himalaya Birkin 25</td><td>Fashion</td><td>$190,000</td><td>Oct 22, 2025</td><td>40</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       THE JOURNAL PAGE
+  ============================================================ -->
+  <div id="journal-section" class="page-section">
+    <div class="container">
+      <div class="page-header">
+        <div class="page-header-inner fade-in-up">
+          <div>
+            <div class="section-subtitle">Editorial</div>
+            <h1 class="section-title">The Journal</h1>
+          </div>
+        </div>
+      </div>
+
+      <!-- Featured Article -->
+      <div class="journal-hero fade-in">
+        <img class="journal-hero-img" src="https://images.ctfassets.net/a9wd67qru8w4/5iRcBbVhuRS39k8vKu1BZy/0df3068d7fdeb5ac2ef85143fc62b802/CW21_Magazin_06.jpg?fm=jpg&w=1920&q=90&fl=progressive" alt="Featured Article" loading="lazy" />
+        <div class="journal-hero-overlay">
+          <div class="journal-hero-content">
+            <span class="journal-tag">Horology</span>
+            <h2 class="journal-hero-title">The Rise of Watch Collecting as Alternative Investment</h2>
+            <p class="journal-meta">By <span>James Whitmore</span> · February 12, 2026 · 8 min read</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Article Grid -->
+      <div class="journal-grid mt-3xl">
+
+        <div class="journal-card fade-in-up">
+          <div class="journal-card-img-wrap">
+            <img class="journal-card-img" src="https://images.stockcake.com/public/6/7/a/67a6970d-8d20-42d3-9a7a-45c197051e95_large/art-gallery-interior-stockcake.jpg" alt="" loading="lazy" />
+          </div>
+          <div class="journal-card-body">
+            <span class="journal-tag">Art &amp; Culture</span>
+            <h3 class="journal-card-title">Inside the World's Most Exclusive Private Art Collections</h3>
+            <p class="journal-card-excerpt">From Geffen's compound in Malibu to the private vaults of Zurich—these are the collections that never appear at auction, and the stories behind them.</p>
+            <div class="journal-card-footer">
+              <div class="journal-author"><i class="fa-solid fa-circle-user" style="color:var(--champagne);"></i> Sofia Laurent</div>
+              <span>Jan 28, 2026</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="journal-card fade-in-up" style="transition-delay:0.1s">
+          <div class="journal-card-img-wrap">
+            <img class="journal-card-img" src="https://www.christies.com/img/LotImages/2024/PAR/2024_PAR_23574_0160_000(a_limited_edition_black_calf_box_leather_so_black_birkin_35_with_black061651).jpg?mode=max" alt="" loading="lazy" />
+          </div>
+          <div class="journal-card-body">
+            <span class="journal-tag">Investment Collectibles</span>
+            <h3 class="journal-card-title">Why Heritage Handbags Are Outperforming the S&amp;P 500</h3>
+            <p class="journal-card-excerpt">Hermès Birkins returned 14.2% annually over the last decade. We examine why scarcity, craft, and iconography are the new market fundamentals.</p>
+            <div class="journal-card-footer">
+              <div class="journal-author"><i class="fa-solid fa-circle-user" style="color:var(--champagne);"></i> Marc Delacroix</div>
+              <span>Jan 15, 2026</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="journal-card fade-in-up" style="transition-delay:0.2s">
+          <div class="journal-card-img-wrap">
+            <img class="journal-card-img" src="https://tempusmagazine.co.uk/app/uploads/news_images/9246158511.jpg" alt="" loading="lazy" />
+          </div>
+          <div class="journal-card-body">
+            <span class="journal-tag">Automotive</span>
+            <h3 class="journal-card-title">The Art of the Supercar: Engineering Meets Sculpture</h3>
+            <p class="journal-card-excerpt">The Black Badge program wasn't just a technical upgrade—it was Rolls-Royce telling the world that dark is the new gold. An intimate profile.</p>
+            <div class="journal-card-footer">
+              <div class="journal-author"><i class="fa-solid fa-circle-user" style="color:var(--champagne);"></i> Thomas Vance</div>
+              <span>Dec 19, 2025</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="journal-card fade-in-up" style="transition-delay:0.3s">
+          <div class="journal-card-img-wrap">
+            <img class="journal-card-img" src="https://thumbs.dreamstime.com/b/luxury-yacht-sailing-deep-blue-ocean-aerial-top-view-high-resolution-image-luxurious-motor-yacht-cuts-deep-blue-366258625.jpg" alt="" loading="lazy" />
+          </div>
+          <div class="journal-card-body">
+            <span class="journal-tag">Lifestyle</span>
+            <h3 class="journal-card-title">The New Language of Privacy: Yachts, Jets, and Anonymous Ownership</h3>
+            <p class="journal-card-excerpt">In 2026, ultra-high-net-worth individuals are increasingly structuring asset ownership through foundations and trusts. The Vault explains how to navigate this.</p>
+            <div class="journal-card-footer">
+              <div class="journal-author"><i class="fa-solid fa-circle-user" style="color:var(--champagne);"></i> Amara Patel</div>
+              <span>Dec 5, 2025</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       ADMIN PANEL
+  ============================================================ -->
+  <div id="admin-section" class="page-section">
+    <div class="container">
+      <!-- Password Screen -->
+      <div class="admin-password-screen" id="adminPasswordScreen">
+        <i class="fa-solid fa-lock"></i>
+        <div class="section-subtitle" style="margin-bottom:var(--space-md);">Restricted Area</div>
+        <h2 class="section-title mb-xl">Admin Portal</h2>
+        <div style="width:100%; max-width:340px;">
+          <input class="form-input" type="password" id="adminPasswordInput" placeholder="Enter admin password" style="margin-bottom:var(--space-md); text-align:center;" onkeyup="if(event.key==='Enter') verifyAdmin()" />
+          <button class="btn btn-primary" style="width:100%;" onclick="verifyAdmin()">Access Portal</button>
+          <p class="muted-text mt-md" style="font-size:0.75rem; text-align:center;">Vault staff only · 2FA required for production</p>
+        </div>
+      </div>
+
+      <!-- Admin Inner (hidden until password) -->
+      <div class="admin-inner" id="adminInner">
+        <div class="page-header">
+          <div class="page-header-inner">
+            <div>
+              <div class="section-subtitle">Vault Operations</div>
+              <h1 class="section-title">Admin Dashboard</h1>
+            </div>
+            <button class="btn btn-ghost" onclick="lockAdmin()" style="font-size:0.75rem;"><i class="fa-solid fa-lock" style="margin-right:0.3rem;"></i> Lock</button>
+          </div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="kpi-grid fade-in-up">
+          <div class="kpi-card">
+            <div class="kpi-label">Total GMV</div>
+            <div class="kpi-value">$47.2M</div>
+            <div class="kpi-change up">↑ 18.3% MoM</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">MRR</div>
+            <div class="kpi-value">$298K</div>
+            <div class="kpi-change up">↑ 4.1% MoM</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Active Listings</div>
+            <div class="kpi-value">312</div>
+            <div class="kpi-change up">↑ 24 new</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Pending Auth</div>
+            <div class="kpi-value">23</div>
+            <div class="kpi-change down">↑ 5 urgent</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Active Disputes</div>
+            <div class="kpi-value">2</div>
+            <div class="kpi-change up">↓ 1 vs last</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Churn Rate</div>
+            <div class="kpi-value">1.2%</div>
+            <div class="kpi-change up">↓ 0.3% MoM</div>
+          </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="admin-charts-grid fade-in-up">
+          <div class="chart-widget">
+            <div class="chart-widget-title">GMV — Last 6 Months</div>
+            <canvas id="gmvChart" height="120"></canvas>
+          </div>
+          <div class="chart-widget">
+            <div class="chart-widget-title">Listings by Category</div>
+            <canvas id="categoryChart" height="120"></canvas>
+          </div>
+        </div>
+
+        <!-- Submissions for Moderation -->
+        <div class="chart-widget fade-in-up mb-xl">
+          <div class="chart-widget-title" style="margin-bottom:var(--space-lg);">Pending Moderation</div>
+          <div id="moderationList">
+            <div class="moderation-item">
+              <img src="https://images.ctfassets.net/a9wd67qru8w4/5iRcBbVhuRS39k8vKu1BZy/0df3068d7fdeb5ac2ef85143fc62b802/CW21_Magazin_06.jpg?fm=jpg&w=80&q=80" alt="" />
+              <div class="moderation-info">
+                <div class="moderation-name">Patek Philippe Calatrava 6119G</div>
+                <div class="moderation-meta">Submitted by Member #1092 · $28,000 · Watches</div>
+              </div>
+              <div class="moderation-actions">
+                <button class="approve-btn" onclick="moderateItem(this, 'approve')"><i class="fa-solid fa-check"></i> Approve</button>
+                <button class="reject-btn" onclick="moderateItem(this, 'reject')"><i class="fa-solid fa-times"></i> Reject</button>
+              </div>
+            </div>
+            <div class="moderation-item">
+              <img src="https://cdn.cluboenologique.com/wp-content/uploads/2023/02/22105618/cellar_maison-lead.jpg" alt="" />
+              <div class="moderation-info">
+                <div class="moderation-name">Château Pétrus 1982 Jeroboam</div>
+                <div class="moderation-meta">Submitted by Member #0741 · $55,000 · Fine Wine</div>
+              </div>
+              <div class="moderation-actions">
+                <button class="approve-btn" onclick="moderateItem(this, 'approve')"><i class="fa-solid fa-check"></i> Approve</button>
+                <button class="reject-btn" onclick="moderateItem(this, 'reject')"><i class="fa-solid fa-times"></i> Reject</button>
+              </div>
+            </div>
+            <div class="moderation-item">
+              <img src="https://www.christies.com/img/LotImages/2024/PAR/2024_PAR_23574_0160_000(a_limited_edition_black_calf_box_leather_so_black_birkin_35_with_black061651).jpg?mode=max" alt="" />
+              <div class="moderation-info">
+                <div class="moderation-name">Hermès Birkin 40 Togo Gold</div>
+                <div class="moderation-meta">Submitted by Member #1887 · $22,500 · Fashion</div>
+              </div>
+              <div class="moderation-actions">
+                <button class="approve-btn" onclick="moderateItem(this, 'approve')"><i class="fa-solid fa-check"></i> Approve</button>
+                <button class="reject-btn" onclick="moderateItem(this, 'reject')"><i class="fa-solid fa-times"></i> Reject</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Find It For Me Kanban -->
+        <div class="chart-widget fade-in-up mb-xl">
+          <div class="chart-widget-title" style="margin-bottom:var(--space-lg);">"Find It For Me" Pipeline</div>
+          <div class="kanban-board">
+            <div class="kanban-column">
+              <div class="kanban-col-title">Received</div>
+              <div class="kanban-card">
+                <div class="kanban-card-name">Rolex Daytona 116500LN</div>
+                <div class="kanban-card-meta">Member #1204 · Budget $35K</div>
+              </div>
+              <div class="kanban-card">
+                <div class="kanban-card-name">Bugatti Chiron (Any Color)</div>
+                <div class="kanban-card-meta">Member #0882 · Budget $3.5M</div>
+              </div>
+            </div>
+            <div class="kanban-column">
+              <div class="kanban-col-title">Sourcing</div>
+              <div class="kanban-card">
+                <div class="kanban-card-name">Richard Mille RM 11-03</div>
+                <div class="kanban-card-meta">Member #1540 · Budget $180K</div>
+              </div>
+            </div>
+            <div class="kanban-column">
+              <div class="kanban-col-title">Options Found</div>
+              <div class="kanban-card">
+                <div class="kanban-card-name">Chanel 2.55 Classic Flap</div>
+                <div class="kanban-card-meta">Member #0662 · 3 options ready</div>
+              </div>
+              <div class="kanban-card">
+                <div class="kanban-card-name">DRC Jeroboam 2015</div>
+                <div class="kanban-card-meta">Member #1095 · 1 option</div>
+              </div>
+            </div>
+            <div class="kanban-column">
+              <div class="kanban-col-title">Presented</div>
+              <div class="kanban-card">
+                <div class="kanban-card-name">Patek Philippe 5726A</div>
+                <div class="kanban-card-meta">Member #0441 · Awaiting decision</div>
+              </div>
+            </div>
+            <div class="kanban-column">
+              <div class="kanban-col-title">Purchased</div>
+              <div class="kanban-card">
+                <div class="kanban-card-name">McLaren P1 GTR</div>
+                <div class="kanban-card-meta">Member #1001 · $3.1M · In transit</div>
+              </div>
+            </div>
+            <div class="kanban-column">
+              <div class="kanban-col-title">Delivered</div>
+              <div class="kanban-card">
+                <div class="kanban-card-name">Hermès Himalaya Birkin</div>
+                <div class="kanban-card-meta">Member #0887 · Completed</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Member List -->
+        <div class="chart-widget fade-in-up">
+          <div class="chart-widget-title" style="margin-bottom:var(--space-lg);">Member Registry</div>
+          <div class="admin-search">
+            <input class="form-input" type="text" id="memberSearch" placeholder="Search by name or member ID..." oninput="filterMembers(this.value)" />
+            <button class="btn btn-outline" style="white-space:nowrap; font-size:0.75rem;">Export CSV</button>
+          </div>
+          <div class="table-wrapper">
+            <table class="listings-table" id="memberTable">
+              <thead>
+                <tr><th>ID</th><th>Name</th><th>Email</th><th>Tier</th><th>GMV</th><th>Joined</th><th>Status</th></tr>
+              </thead>
+              <tbody id="memberTableBody">
+                <!-- JS generated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div><!-- /admin-inner -->
+    </div>
+  </div>
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <footer id="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-logo">THE VAULT</div>
+          <p class="footer-tagline">Where extraordinary changes hands. The world's most exclusive concierge marketplace for luxury goods $10,000 and above.</p>
+          <div class="footer-social">
+            <a href="#" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-x-twitter"></i></a>
+            <a href="#" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-whatsapp"></i></a>
+            <a href="#" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-telegram"></i></a>
+          </div>
+        </div>
+        <div>
+          <div class="footer-col-title">For Members</div>
+          <ul class="footer-links">
+            <li><a href="#" onclick="navigateTo('collection');return false;">Browse Collection</a></li>
+            <li><a href="#" onclick="navigateTo('membership');return false;">Membership</a></li>
+            <li><a href="#" onclick="navigateTo('sell');return false;">List an Item</a></li>
+            <li><a href="#" onclick="navigateTo('dashboard');return false;">My Dashboard</a></li>
+            <li><a href="#" onclick="navigateTo('auctions');return false;">Private Auctions</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">Trust &amp; Safety</div>
+          <ul class="footer-links">
+            <li><a href="#">Authentication Process</a></li>
+            <li><a href="#">Escrow Protection</a></li>
+            <li><a href="#">Insurance Coverage</a></li>
+            <li><a href="#">Privacy &amp; NDAs</a></li>
+            <li><a href="#">Dispute Resolution</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">Connect</div>
+          <ul class="footer-links">
+            <li><a href="#">WhatsApp Concierge</a></li>
+            <li><a href="#">Email: vault@thevault.co</a></li>
+            <li><a href="#" onclick="navigateTo('journal');return false;">The Journal</a></li>
+            <li><a href="#">Request an Invitation</a></li>
+            <li><a href="#">Press &amp; Media</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div class="footer-copyright">© 2026 THE VAULT. Invite Only. $10,000 Minimum.</div>
+        <div class="footer-legal">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Cookie Preferences</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============================================================
+       PRODUCT MODAL
+  ============================================================ -->
+  <div class="modal-overlay" id="productModal" onclick="handleModalClick(event)">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal()"><i class="fa-solid fa-times"></i></button>
+      <div class="modal-grid">
+        <div class="modal-image-wrap">
+          <img class="modal-image" id="modalImage" src="" alt="" />
+        </div>
+        <div class="modal-details">
+          <div class="modal-category" id="modalCategory"></div>
+          <div class="modal-title" id="modalTitle"></div>
+          <div class="modal-price" id="modalPrice"></div>
+          <div class="modal-meta" id="modalMeta"></div>
+          <div class="modal-market-context" id="modalMarket"></div>
+          <div class="modal-seller"><i class="fa-solid fa-shield-halved"></i> Listed by Private Seller · Authenticated by The Vault</div>
+          <div class="modal-actions">
+            <button class="btn btn-primary" onclick="showToast('Purchase', 'Redirecting to secure PayPal checkout...')">
+              <i class="fa-brands fa-paypal"></i> Acquire Now
+            </button>
+            <button class="btn btn-outline" onclick="showToast('Offer', 'Your private offer request has been submitted.')">
+              Make Private Offer
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       LUXE AI CHAT
+  ============================================================ -->
+  <button class="luxe-float-btn" onclick="toggleChat()" title="LUXE AI Concierge">
+    <i class="fa-solid fa-sparkles"></i>
+    <div class="luxe-notif">1</div>
+  </button>
+
+  <div class="luxe-chat-panel" id="luxeChatPanel">
+    <div class="luxe-chat-header">
+      <div class="luxe-chat-avatar"><i class="fa-solid fa-sparkles"></i></div>
+      <div>
+        <div class="luxe-chat-name">LUXE</div>
+        <div class="luxe-chat-status">Your Digital Butler · Online</div>
+      </div>
+      <button onclick="toggleChat()" style="background:none;border:none;color:var(--ivory-muted);cursor:pointer;margin-left:auto;font-size:0.9rem;padding:0.25rem;" title="Close">
+        <i class="fa-solid fa-times"></i>
+      </button>
+    </div>
+    <div class="luxe-chat-messages" id="chatMessages">
+      <div class="chat-message luxe">
+        <div class="chat-sender">LUXE</div>
+        <div class="chat-bubble">Good evening. I'm LUXE, your personal concierge at The Vault. How may I assist you today?</div>
+      </div>
+      <div class="chat-chips">
+        <button class="chat-chip" onclick="sendChip(this)">Find me a watch</button>
+        <button class="chat-chip" onclick="sendChip(this)">List an item</button>
+        <button class="chat-chip" onclick="sendChip(this)">Check my orders</button>
+        <button class="chat-chip" onclick="sendChip(this)">What's trending?</button>
+      </div>
+    </div>
+    <div class="luxe-chat-input-area">
+      <input class="luxe-chat-input" type="text" id="chatInput" placeholder="Message LUXE..." onkeyup="if(event.key==='Enter')sendMessage()" />
+      <button class="luxe-chat-send" onclick="sendMessage()"><i class="fa-solid fa-arrow-up"></i></button>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       JAVASCRIPT
+  ============================================================ -->
+  <script>
+    // ============================================================
+    // PRODUCT DATA
+    // ============================================================
+    const products = [
+      {
+        name: 'Patek Philippe Nautilus 5711',
+        category: 'Watches & Horology',
+        price: '$185,000',
+        img: 'https://images.ctfassets.net/a9wd67qru8w4/5iRcBbVhuRS39k8vKu1BZy/0df3068d7fdeb5ac2ef85143fc62b802/CW21_Magazin_06.jpg?fm=jpg&w=1920&q=100&fl=progressive',
+        condition: 'Pre-owned (Excellent)',
+        provenance: 'Private Swiss Collection',
+        auth: 'Verified by Patek Philippe SA',
+        market: 'Similar items sold for $160,000–$210,000 in the last 90 days'
+      },
+      {
+        name: 'Rolls-Royce Black Badge Ghost',
+        category: 'Supercars & Exotics',
+        price: '$385,000',
+        img: 'https://tempusmagazine.co.uk/app/uploads/news_images/9246158511.jpg',
+        condition: 'New (Delivery Miles)',
+        provenance: 'Private UAE Collection',
+        auth: 'Verified by Rolls-Royce Motor Cars',
+        market: 'Similar items sold for $340,000–$420,000 in the last 90 days'
+      },
+      {
+        name: '18K Diamond Rivière Necklace',
+        category: 'Fine Jewelry & Gems',
+        price: '$92,000',
+        img: 'https://static.vecteezy.com/system/resources/previews/065/714/815/large_2x/luxury-diamond-necklace-shining-brightly-on-dark-background-photo.jpg',
+        condition: 'New',
+        provenance: 'Private Geneva Collection',
+        auth: 'GIA Certified · Vault Verified',
+        market: 'Similar items sold for $75,000–$110,000 in the last 90 days'
+      },
+      {
+        name: 'Hermès So Black Birkin 35',
+        category: 'Haute Couture & Fashion',
+        price: '$75,000',
+        img: 'https://www.christies.com/img/LotImages/2024/PAR/2024_PAR_23574_0160_000(a_limited_edition_black_calf_box_leather_so_black_birkin_35_with_black061651).jpg?mode=max',
+        condition: 'Pre-owned (Excellent)',
+        provenance: 'Paris Private Collection',
+        auth: 'Entrupy Authenticated · Vault Verified',
+        market: 'Similar items sold for $60,000–$95,000 in the last 90 days'
+      },
+      {
+        name: 'Azimut Grande 32M',
+        category: 'Yachts & Aviation',
+        price: '$2,400,000',
+        img: 'https://thumbs.dreamstime.com/b/luxury-yacht-sailing-deep-blue-ocean-aerial-top-view-high-resolution-image-luxurious-motor-yacht-cuts-deep-blue-366258625.jpg',
+        condition: 'Pre-owned (2022)',
+        provenance: 'Monaco Yacht Registry',
+        auth: 'Bureau Veritas Certified',
+        market: 'Similar yachts sold for $2.1M–$2.8M in the last 90 days'
+      },
+      {
+        name: 'Contemporary Abstract Oil on Canvas',
+        category: 'Fine Art & Sculptures',
+        price: '$340,000',
+        img: 'https://images.stockcake.com/public/6/7/a/67a6970d-8d20-42d3-9a7a-45c197051e95_large/art-gallery-interior-stockcake.jpg',
+        condition: 'New',
+        provenance: 'Gallery Direct · New York',
+        auth: 'Provenance Documentation · Vault Certified',
+        market: 'Similar works sold for $280,000–$400,000 in the last 90 days'
+      },
+      {
+        name: 'Romanée-Conti 12-Bottle Vertical',
+        category: 'Fine Wine & Spirits',
+        price: '$128,000',
+        img: 'https://cdn.cluboenologique.com/wp-content/uploads/2023/02/22105618/cellar_maison-lead.jpg',
+        condition: 'Vintage (2010–2021)',
+        provenance: 'Private Burgundy Cellar',
+        auth: 'Farr Vintners Verified · Vault Certified',
+        market: 'Similar verticals sold for $110,000–$155,000 in the last 90 days'
+      },
+      {
+        name: 'Patek Philippe 5811/1G',
+        category: 'Watches & Horology',
+        price: '$245,000',
+        img: 'https://hodinkee.imgix.net/uploads/images/ae56ad66-4cfa-4d2b-9d2e-e595d8f95761/patek-philippe-nautilus-5811-4.jpg?ixlib=rails-1.1.0&fm=jpg&q=55&auto=format&usm=12&fit=crop&ch=Width%2CDPR%2CSave-Data&alt=',
+        condition: 'New (Full Set)',
+        provenance: 'Authorized Dealer',
+        auth: 'Verified by Patek Philippe SA',
+        market: 'Similar items sold for $200,000–$280,000 in the last 90 days'
+      }
+    ];
+
+    // ============================================================
+    // CATEGORIES DATA
+    // ============================================================
+    const categories = [
+      { name: 'Fine Art & Sculptures', icon: 'fa-palette', count: 42 },
+      { name: 'Haute Couture & Fashion', icon: 'fa-bag-shopping', count: 78 },
+      { name: 'Watches & Horology', icon: 'fa-clock', count: 95 },
+      { name: 'Fine Jewelry & Gems', icon: 'fa-gem', count: 61 },
+      { name: 'Supercars & Exotic Motorcycles', icon: 'fa-car', count: 29 },
+      { name: 'Yachts & Private Aviation', icon: 'fa-ship', count: 14 },
+      { name: 'Luxury Real Estate', icon: 'fa-building', count: 8 },
+      { name: 'Rare Collectibles & Memorabilia', icon: 'fa-star', count: 37 },
+      { name: 'Fine Wine & Spirits', icon: 'fa-wine-glass', count: 56 },
+      { name: 'Luxury Furniture & Décor', icon: 'fa-couch', count: 23 },
+      { name: 'Designer Tech & Gadgets', icon: 'fa-microchip', count: 19 },
+    ];
+
+    // ============================================================
+    // MEMBERS DATA
+    // ============================================================
+    const members = [
+      { id: '0001', name: 'Alexandra Whitfield', email: 'a***d@gmail.com', tier: 'Founding', gmv: '$1.2M', joined: 'Jan 2024', status: 'Active' },
+      { id: '0441', name: 'James Harrington', email: 'j***n@outlook.com', tier: 'Black Card', gmv: '$4.8M', joined: 'Jan 2024', status: 'Active' },
+      { id: '0662', name: 'Sophie Laurent', email: 's***t@icloud.com', tier: 'Founding', gmv: '$890K', joined: 'Feb 2024', status: 'Active' },
+      { id: '0741', name: 'Olivier Marchand', email: 'o***d@proton.me', tier: 'Founding', gmv: '$2.1M', joined: 'Mar 2024', status: 'Active' },
+      { id: '0882', name: 'Priya Krishnamurthy', email: 'p***y@gmail.com', tier: 'Black Card', gmv: '$6.2M', joined: 'Mar 2024', status: 'Active' },
+      { id: '1001', name: 'Viktor Volkov', email: 'v***v@ve.com', tier: 'Founding', gmv: '$3.5M', joined: 'Apr 2024', status: 'Active' },
+      { id: '1092', name: 'Emiliano Rossi', email: 'e***i@gmail.com', tier: 'Standard', gmv: '$420K', joined: 'Jun 2024', status: 'Active' },
+      { id: '1204', name: 'Naomi Chen', email: 'n***n@apple.com', tier: 'Standard', gmv: '$185K', joined: 'Aug 2024', status: 'Active' },
+      { id: '1540', name: 'Rajiv Mehta', email: 'r***a@gmail.com', tier: 'Founding', gmv: '$978K', joined: 'Oct 2024', status: 'Active' },
+      { id: '1887', name: 'Charlotte Dubois', email: 'c***s@icloud.com', tier: 'Standard', gmv: '$67K', joined: 'Dec 2024', status: 'Inactive' },
+    ];
+
+    // ============================================================
+    // ROUTER
+    // ============================================================
+    const sections = {
+      home: 'home-section',
+      collection: 'collection-section',
+      membership: 'membership-section',
+      sell: 'sell-section',
+      dashboard: 'dashboard-section',
+      auctions: 'auctions-section',
+      journal: 'journal-section',
+      admin: 'admin-section'
+    };
+
+    let currentSection = 'home';
+    let adminUnlocked = false;
+
+    function navigateTo(page) {
+      // Hide all sections
+      Object.values(sections).forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.classList.remove('active');
+        }
+      });
+
+      // Show footer only on home
+      const footer = document.getElementById('footer');
+      footer.style.display = page === 'home' ? 'block' : 'block';
+
+      // Show target
+      const target = document.getElementById(sections[page]);
+      if (target) {
+        target.classList.add('active');
+      }
+
+      currentSection = page;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      // Update nav active state
+      document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+
+      // Update hash
+      if (page !== 'home') {
+        history.pushState(null, '', '#' + page);
+      } else {
+        history.pushState(null, '', window.location.pathname);
+      }
+
+      // Init page-specific stuff
+      if (page === 'admin') initAdminPage();
+      if (page === 'collection') populateCollectionGrid();
+      if (page === 'home') initHomeAnimations();
+    }
+
+    // Handle hash on load
+    window.addEventListener('load', () => {
+      const hash = window.location.hash.replace('#', '');
+      if (hash && sections[hash]) {
+        navigateTo(hash);
+      }
+    });
+
+    window.addEventListener('popstate', () => {
+      const hash = window.location.hash.replace('#', '');
+      if (hash && sections[hash]) {
+        navigateTo(hash);
+      } else {
+        navigateTo('home');
+      }
+    });
+
+    // ============================================================
+    // LOADING SCREEN
+    // ============================================================
+    function createParticles() {
+      const container = document.getElementById('loadingParticles');
+      for (let i = 0; i < 40; i++) {
+        const p = document.createElement('div');
+        p.className = 'loading-particle';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.width = p.style.height = (Math.random() * 3 + 1) + 'px';
+        p.style.animationDelay = (Math.random() * 4) + 's';
+        p.style.animationDuration = (Math.random() * 3 + 3) + 's';
+        container.appendChild(p);
+      }
+    }
+
+    createParticles();
+
+    setTimeout(() => {
+      const loading = document.getElementById('loading-screen');
+      loading.classList.add('hidden');
+      initHomeAnimations();
+    }, 2700);
+
+    // ============================================================
+    // CUSTOM CURSOR
+    // ============================================================
+    const dot = document.getElementById('cursorDot');
+    const ring = document.getElementById('cursorRing');
+    let ringX = 0, ringY = 0;
+
+    document.addEventListener('mousemove', e => {
+      dot.style.left = e.clientX + 'px';
+      dot.style.top = e.clientY + 'px';
+
+      // Ring follows with delay
+      setTimeout(() => {
+        ring.style.left = e.clientX + 'px';
+        ring.style.top = e.clientY + 'px';
+      }, 80);
+    });
+
+    document.addEventListener('mousedown', () => {
+      dot.style.transform = 'translate(-50%, -50%) scale(0.7)';
+    });
+
+    document.addEventListener('mouseup', () => {
+      dot.style.transform = 'translate(-50%, -50%) scale(1)';
+    });
+
+    document.querySelectorAll('a, button, [onclick], .product-card, .how-card, .category-card').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        dot.classList.add('cursor-hover');
+        ring.classList.add('cursor-hover');
+      });
+      el.addEventListener('mouseleave', () => {
+        dot.classList.remove('cursor-hover');
+        ring.classList.remove('cursor-hover');
+      });
+    });
+
+    // ============================================================
+    // NAVBAR SCROLL
+    // ============================================================
+    window.addEventListener('scroll', () => {
+      const nav = document.getElementById('navbar');
+      if (window.scrollY > 60) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+    });
+
+    // ============================================================
+    // MOBILE MENU
+    // ============================================================
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobileMenu');
+      const hamburger = document.getElementById('hamburger');
+      menu.classList.toggle('open');
+      hamburger.classList.toggle('open');
+      document.body.classList.toggle('menu-open');
+    }
+
+    // ============================================================
+    // HOME ANIMATIONS (Intersection Observer)
+    // ============================================================
+    function initHomeAnimations() {
+      const fadeEls = document.querySelectorAll('.fade-in-up, .fade-in');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+      fadeEls.forEach(el => observer.observe(el));
+
+      // Gold line animation
+      setTimeout(() => {
+        document.querySelectorAll('.gold-line').forEach(el => {
+          el.classList.add('animate');
+        });
+      }, 3500);
+    }
+
+    // ============================================================
+    // CAROUSEL
+    // ============================================================
+    function scrollCarousel(dir) {
+      const track = document.getElementById('carouselTrack');
+      track.scrollBy({ left: dir * 320, behavior: 'smooth' });
+    }
+
+    // ============================================================
+    // CATEGORIES RENDER
+    // ============================================================
+    function renderCategories() {
+      const grid = document.getElementById('categoriesGrid');
+      if (!grid) return;
+      grid.innerHTML = categories.map(cat => `
+        <div class="category-card" onclick="filterCategory('${cat.name}')">
+          <div class="category-card-left">
+            <div class="category-icon"><i class="fa-solid ${cat.icon}"></i></div>
+            <div>
+              <div class="category-name">${cat.name}</div>
+              <div class="category-count">${cat.count} items</div>
+            </div>
+          </div>
+          <div class="category-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+        </div>
+      `).join('');
+    }
+
+    function filterCategory(name) {
+      navigateTo('collection');
+    }
+
+    renderCategories();
+
+    // ============================================================
+    // COLLECTION GRID RENDER
+    // ============================================================
+    function populateCollectionGrid() {
+      const grid = document.getElementById('collectionGrid');
+      const filterGrid = document.getElementById('categoryFilters');
+
+      if (filterGrid && !filterGrid.innerHTML) {
+        filterGrid.innerHTML = categories.map((c, i) => `
+          <div class="filter-item">
+            <input type="checkbox" id="catFilter${i}" checked />
+            <label for="catFilter${i}">${c.name} <span style="color:var(--ivory-muted);font-size:0.75rem;">(${c.count})</span></label>
+          </div>
+        `).join('');
+      }
+
+      if (!grid) return;
+
+      // Build extended product list (repeat + variations)
+      const extended = [...products, ...products.map((p, i) => ({...p, name: p.name + ' II', price: p.price}))];
+
+      grid.innerHTML = extended.map((p, i) => `
+        <div class="product-card" onclick="openProductModal(${i % products.length})">
+          <div class="product-card-image-wrap">
+            <img class="product-card-image" src="${p.img}" alt="${p.name}" loading="lazy" />
+            <div class="product-auth-badge">Authenticated ✓</div>
+          </div>
+          <div class="product-card-body">
+            <div class="product-card-category">${p.category}</div>
+            <div class="product-card-name">${p.name}</div>
+            <div class="product-card-price">${p.price}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function updatePriceLabel(val) {
+      const n = parseInt(val);
+      const label = n >= 5000000 ? '$5M+' : '$' + (n >= 1000000 ? (n/1000000).toFixed(1) + 'M' : (n/1000).toFixed(0) + 'K');
+      document.getElementById('priceLabel').textContent = label;
+    }
+
+    // ============================================================
+    // PRODUCT MODAL
+    // ============================================================
+    function openProductModal(idx) {
+      const p = products[idx];
+      document.getElementById('modalImage').src = p.img;
+      document.getElementById('modalImage').alt = p.name;
+      document.getElementById('modalCategory').textContent = p.category;
+      document.getElementById('modalTitle').textContent = p.name;
+      document.getElementById('modalPrice').textContent = p.price;
+      document.getElementById('modalMeta').innerHTML = `
+        <div class="modal-meta-item"><span class="modal-meta-label">Condition</span><span class="modal-meta-value">${p.condition}</span></div>
+        <div class="modal-meta-item"><span class="modal-meta-label">Provenance</span><span class="modal-meta-value">${p.provenance}</span></div>
+        <div class="modal-meta-item"><span class="modal-meta-label">Authentication</span><span class="modal-meta-value">${p.auth}</span></div>
+      `;
+      document.getElementById('modalMarket').innerHTML = `<strong>Market Context:</strong> ${p.market}`;
+      document.getElementById('productModal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      document.getElementById('productModal').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function handleModalClick(e) {
+      if (e.target === document.getElementById('productModal')) closeModal();
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    // ============================================================
+    // SELL FORM
+    // ============================================================
+    function validatePrice(input) {
+      const val = parseFloat(input.value);
+      const err = document.getElementById('priceError');
+      if (val && val < 10000) {
+        err.classList.add('show');
+        input.style.borderColor = 'var(--error)';
+      } else {
+        err.classList.remove('show');
+        input.style.borderColor = '';
+      }
+    }
+
+    function showEnhancement() {
+      const preview = document.getElementById('enhancementPreview');
+      preview.classList.add('show');
+      showToast('AI Enhancement', 'Photo enhancement preview generated successfully.');
+    }
+
+    function handleFileUpload(input) {
+      const preview = document.getElementById('uploadPreview');
+      preview.innerHTML = '';
+      Array.from(input.files).slice(0, 6).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = e => {
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.style.cssText = 'width:60px;height:60px;object-fit:cover;border-radius:4px;border:1px solid rgba(201,169,110,0.3);';
+          preview.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+      });
+      if (input.files.length > 0) {
+        document.querySelector('.upload-zone-title').textContent = `${input.files.length} photo${input.files.length > 1 ? 's' : ''} selected`;
+      }
+    }
+
+    const uploadZone = document.getElementById('uploadZone');
+    uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('dragover'); });
+    uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
+    uploadZone.addEventListener('drop', e => { e.preventDefault(); uploadZone.classList.remove('dragover'); });
+
+    function submitListing() {
+      const name = document.getElementById('itemName').value;
+      const price = parseFloat(document.getElementById('askingPrice').value);
+      if (!name) { showToast('Error', 'Please enter an item name.'); return; }
+      if (!price || price < 10000) { showToast('Error', 'Asking price must be $10,000 or above.'); return; }
+      showToast('Success', `"${name}" has been submitted to The Vault for review.`);
+    }
+
+    // ============================================================
+    // FIND IT FOR ME
+    // ============================================================
+    function submitFindIt() {
+      const text = document.getElementById('findItText').value;
+      if (!text.trim()) { showToast('Error', 'Please describe what you\'re looking for.'); return; }
+      showToast('Submitted', 'LUXE is on it. Expect options within 72 hours.');
+      document.getElementById('findItText').value = '';
+    }
+
+    // ============================================================
+    // TOAST NOTIFICATION
+    // ============================================================
+    let toastTimeout;
+    function showToast(title, msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastTitle').textContent = title;
+      document.getElementById('toastMsg').textContent = msg;
+      toast.classList.add('show');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => toast.classList.remove('show'), 4000);
+    }
+
+    // ============================================================
+    // LUXE AI CHAT
+    // ============================================================
+    let chatOpen = false;
+
+    const chatResponses = {
+      'find me a watch': "Excellent taste. I can source watches starting from $10,000. Are you looking for something specific — a Patek Philippe, Rolex, or Richard Mille perhaps? Or shall I browse our current Watches & Horology collection for you?",
+      'list an item': "Of course. Head to the Sell portal to upload your item photos. I'll assist with pricing, description, and authentication scheduling. What category is the item?",
+      'check my orders': "Your last acquisition was a Patek Philippe 5811/1G, delivered January 12th. Your Azimut Grande 32M is in your Wishlist. Would you like a full portfolio summary?",
+      "what's trending?": "This week at The Vault: Hermès So Black Birkins are in exceptional demand — three sold above estimate in 7 days. In horology, Patek Nautilus variants remain the benchmark. In fine art, post-war abstracts are seeing aggressive buying from Asian collectors.",
+      'default': "I understand. Let me look into that for you. As your personal concierge, I'll source the best options and present them within 72 hours. Is there a specific budget or preference I should know?"
+    };
+
+    function toggleChat() {
+      chatOpen = !chatOpen;
+      document.getElementById('luxeChatPanel').classList.toggle('open', chatOpen);
+      if (chatOpen) {
+        // Remove notif dot
+        const notif = document.querySelector('.luxe-notif');
+        if (notif) notif.style.display = 'none';
+        setTimeout(() => document.getElementById('chatInput').focus(), 300);
+      }
+    }
+
+    function sendChip(btn) {
+      const text = btn.textContent;
+      btn.parentElement.remove();
+      addUserMessage(text);
+      simulateLuxeResponse(text.toLowerCase());
+    }
+
+    function sendMessage() {
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (!text) return;
+      input.value = '';
+      addUserMessage(text);
+      simulateLuxeResponse(text.toLowerCase());
+    }
+
+    function addUserMessage(text) {
+      const msgs = document.getElementById('chatMessages');
+      const div = document.createElement('div');
+      div.className = 'chat-message user';
+      div.innerHTML = `<div class="chat-bubble">${text}</div>`;
+      msgs.appendChild(div);
+      msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    function simulateLuxeResponse(text) {
+      const msgs = document.getElementById('chatMessages');
+
+      // Typing indicator
+      const typing = document.createElement('div');
+      typing.className = 'chat-message luxe';
+      typing.id = 'typingIndicator';
+      typing.innerHTML = `
+        <div class="typing-indicator">
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+        </div>
+      `;
+      msgs.appendChild(typing);
+      msgs.scrollTop = msgs.scrollHeight;
+
+      const delay = 1200 + Math.random() * 800;
+      setTimeout(() => {
+        const indicator = document.getElementById('typingIndicator');
+        if (indicator) indicator.remove();
+
+        let response = chatResponses['default'];
+        Object.keys(chatResponses).forEach(key => {
+          if (text.includes(key)) response = chatResponses[key];
+        });
+
+        const div = document.createElement('div');
+        div.className = 'chat-message luxe';
+        div.innerHTML = `<div class="chat-sender">LUXE</div><div class="chat-bubble">${response}</div>`;
+        msgs.appendChild(div);
+        msgs.scrollTop = msgs.scrollHeight;
+      }, delay);
+    }
+
+    // ============================================================
+    // COUNTDOWN TIMERS
+    // ============================================================
+    function formatTime(s) {
+      const h = Math.floor(s / 3600);
+      const m = Math.floor((s % 3600) / 60);
+      const sec = s % 60;
+      return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+    }
+
+    let heroSeconds = 7 * 3600 + 23 * 60 + 14;
+    let flashSeconds = 8 * 3600 + 45 * 60 + 52;
+
+    setInterval(() => {
+      if (heroSeconds > 0) heroSeconds--;
+      const el = document.getElementById('heroCountdown');
+      if (el) el.textContent = formatTime(heroSeconds);
+    }, 1000);
+
+    setInterval(() => {
+      if (flashSeconds > 0) flashSeconds--;
+      const el = document.getElementById('flashTimer');
+      if (el) el.textContent = formatTime(flashSeconds);
+    }, 1000);
+
+    // Simulated live bid updates
+    let liveBidAmount = 367000;
+    setInterval(() => {
+      if (Math.random() < 0.15) {
+        liveBidAmount += Math.floor(Math.random() * 5 + 1) * 1000;
+        const el = document.getElementById('liveBid');
+        if (el) {
+          el.textContent = '$' + liveBidAmount.toLocaleString();
+          el.style.color = 'var(--success)';
+          setTimeout(() => { el.style.color = 'var(--champagne)'; }, 800);
+        }
+      }
+    }, 3000);
+
+    // ============================================================
+    // MEMBERSHIP CARD 3D EFFECT
+    // ============================================================
+    const cardContainer = document.getElementById('membershipCardContainer');
+    const card = document.getElementById('membershipCard');
+    const shine = document.getElementById('cardShine');
+
+    if (cardContainer && card) {
+      cardContainer.addEventListener('mousemove', e => {
+        const rect = cardContainer.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const rotateY = ((x - centerX) / centerX) * 15;
+        const rotateX = -((y - centerY) / centerY) * 10;
+        card.style.transform = `rotateY(${rotateY}deg) rotateX(${rotateX}deg)`;
+        if (shine) {
+          const shineX = (x / rect.width) * 100;
+          const shineY = (y / rect.height) * 100;
+          shine.style.background = `radial-gradient(circle at ${shineX}% ${shineY}%, rgba(255,255,255,0.12) 0%, transparent 60%)`;
+        }
+      });
+
+      cardContainer.addEventListener('mouseleave', () => {
+        card.style.transform = 'rotateY(0) rotateX(0)';
+        if (shine) shine.style.background = '';
+      });
+    }
+
+    // Gentle auto-rotate on mobile / when not hovered
+    let autoRotateAngle = 0;
+    let isCardHovered = false;
+    if (cardContainer) {
+      cardContainer.addEventListener('mouseenter', () => isCardHovered = true);
+      cardContainer.addEventListener('mouseleave', () => isCardHovered = false);
+    }
+
+    setInterval(() => {
+      if (!isCardHovered && card) {
+        autoRotateAngle += 0.3;
+        card.style.transform = `rotateY(${Math.sin(autoRotateAngle * 0.01) * 8}deg) rotateX(${Math.sin(autoRotateAngle * 0.007) * 3}deg)`;
+      }
+    }, 16);
+
+    // ============================================================
+    // ADMIN PANEL
+    // ============================================================
+    function verifyAdmin() {
+      const pw = document.getElementById('adminPasswordInput').value;
+      if (pw === 'vault2026') {
+        adminUnlocked = true;
+        document.getElementById('adminPasswordScreen').style.display = 'none';
+        document.getElementById('adminInner').classList.add('visible');
+        initAdminCharts();
+        populateMemberTable(members);
+      } else {
+        showToast('Access Denied', 'Invalid credentials. Please try again.');
+        document.getElementById('adminPasswordInput').style.borderColor = 'var(--error)';
+        setTimeout(() => { document.getElementById('adminPasswordInput').style.borderColor = ''; }, 2000);
+      }
+    }
+
+    function lockAdmin() {
+      adminUnlocked = false;
+      document.getElementById('adminPasswordScreen').style.display = 'flex';
+      document.getElementById('adminInner').classList.remove('visible');
+      document.getElementById('adminPasswordInput').value = '';
+    }
+
+    function initAdminPage() {
+      if (adminUnlocked) {
+        document.getElementById('adminPasswordScreen').style.display = 'none';
+        document.getElementById('adminInner').classList.add('visible');
+        setTimeout(initAdminCharts, 200);
+      }
+    }
+
+    let chartsInitialized = false;
+    function initAdminCharts() {
+      if (chartsInitialized) return;
+      chartsInitialized = true;
+
+      const chartDefaults = {
+        color: 'rgba(201,169,110,0.8)',
+        grid: 'rgba(201,169,110,0.08)',
+        tick: 'rgba(200,200,190,0.5)'
+      };
+
+      // GMV Line Chart
+      const gmvCtx = document.getElementById('gmvChart');
+      if (gmvCtx) {
+        new Chart(gmvCtx, {
+          type: 'line',
+          data: {
+            labels: ['Sep 25', 'Oct 25', 'Nov 25', 'Dec 25', 'Jan 26', 'Feb 26'],
+            datasets: [{
+              label: 'GMV ($M)',
+              data: [5.2, 6.8, 7.1, 9.4, 10.8, 7.9],
+              borderColor: '#C9A96E',
+              backgroundColor: 'rgba(201,169,110,0.08)',
+              borderWidth: 2,
+              fill: true,
+              tension: 0.4,
+              pointBackgroundColor: '#C9A96E',
+              pointRadius: 4
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { display: false }
+            },
+            scales: {
+              x: {
+                grid: { color: chartDefaults.grid },
+                ticks: { color: chartDefaults.tick, font: { size: 11 } }
+              },
+              y: {
+                grid: { color: chartDefaults.grid },
+                ticks: { color: chartDefaults.tick, font: { size: 11 }, callback: v => '$' + v + 'M' }
+              }
+            }
+          }
+        });
+      }
+
+      // Category Bar Chart
+      const catCtx = document.getElementById('categoryChart');
+      if (catCtx) {
+        new Chart(catCtx, {
+          type: 'bar',
+          data: {
+            labels: ['Watches', 'Fashion', 'Jewelry', 'Art', 'Autos', 'Wine', 'Other'],
+            datasets: [{
+              data: [95, 78, 61, 42, 29, 56, 60],
+              backgroundColor: [
+                'rgba(201,169,110,0.7)',
+                'rgba(201,169,110,0.55)',
+                'rgba(201,169,110,0.45)',
+                'rgba(201,169,110,0.6)',
+                'rgba(201,169,110,0.4)',
+                'rgba(201,169,110,0.5)',
+                'rgba(201,169,110,0.35)'
+              ],
+              borderColor: 'rgba(201,169,110,0.3)',
+              borderWidth: 1,
+              borderRadius: 4
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+              x: { grid: { color: chartDefaults.grid }, ticks: { color: chartDefaults.tick, font: { size: 10 } } },
+              y: { grid: { color: chartDefaults.grid }, ticks: { color: chartDefaults.tick, font: { size: 11 } } }
+            }
+          }
+        });
+      }
+    }
+
+    function populateMemberTable(data) {
+      const tbody = document.getElementById('memberTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = data.map(m => `
+        <tr>
+          <td style="color:var(--champagne);">#${m.id}</td>
+          <td>${m.name}</td>
+          <td>${m.email}</td>
+          <td><span class="status-badge ${m.tier === 'Black Card' ? 'sold' : m.tier === 'Founding' ? 'listed' : 'draft'}">${m.tier}</span></td>
+          <td style="color:var(--champagne);">${m.gmv}</td>
+          <td>${m.joined}</td>
+          <td><span class="status-badge ${m.status === 'Active' ? 'listed' : 'draft'}">${m.status}</span></td>
+        </tr>
+      `).join('');
+    }
+
+    function filterMembers(query) {
+      const q = query.toLowerCase();
+      const filtered = members.filter(m =>
+        m.name.toLowerCase().includes(q) ||
+        m.id.includes(q) ||
+        m.tier.toLowerCase().includes(q)
+      );
+      populateMemberTable(filtered);
+    }
+
+    function moderateItem(btn, action) {
+      const item = btn.closest('.moderation-item');
+      if (action === 'approve') {
+        item.style.opacity = '0.5';
+        item.style.borderLeft = '3px solid var(--success)';
+        showToast('Approved', 'Item has been approved and listed.');
+      } else {
+        item.style.opacity = '0.5';
+        item.style.borderLeft = '3px solid var(--error)';
+        showToast('Rejected', 'Item has been rejected with a note to the seller.');
+      }
+      btn.closest('.moderation-actions').innerHTML = `
+        <span style="font-size:0.75rem; color:${action === 'approve' ? 'var(--success)' : 'var(--error)'}">${action === 'approve' ? '✓ Approved' : '✗ Rejected'}</span>
+      `;
+    }
+
+    // ============================================================
+    // INIT ON LOAD
+    // ============================================================
+    document.addEventListener('DOMContentLoaded', () => {
+      initHomeAnimations();
+    });
+
+    // Re-observe after navigation
+    const originalNavigateTo = navigateTo;
+
+  </script>
+</body>
+</html>
