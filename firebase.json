@@ -1,8 +1,10 @@
 {
   "hosting": {
+    "site": "the-vault-luxury",
     "public": ".",
     "ignore": [
       "firebase.json",
+      ".firebaserc",
       "**/.*",
       "**/node_modules/**",
       "README.md"
